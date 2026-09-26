@@ -38,7 +38,7 @@ export default function LoginPage() {
     window.setTimeout(() => {
       // TODO: conectar con la API real
       if (email === demoEmail && password === demoPassword) {
-        router.push('/');
+        router.push('/dashboard');
         return;
       }
 
