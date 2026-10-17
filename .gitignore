@@ -12,6 +12,8 @@
 
 # testing
 /coverage
+/data/users.json
+/data/users.json.*.tmp
 
 # next.js
 /.next/

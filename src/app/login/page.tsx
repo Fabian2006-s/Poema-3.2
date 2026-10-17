@@ -3,9 +3,6 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-const demoEmail = 'demo@poema.com';
-const demoPassword = 'demo1234';
-
 type FormErrors = {
   email?: string;
   password?: string;
@@ -19,7 +16,7 @@ export default function LoginPage() {
   const [authError, setAuthError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
 
     const nextErrors: FormErrors = {};
@@ -35,16 +32,25 @@ export default function LoginPage() {
     if (Object.keys(nextErrors).length > 0) return;
 
     setIsSubmitting(true);
-    window.setTimeout(() => {
-      // TODO: conectar con la API real
-      if (email === demoEmail && password === demoPassword) {
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password }),
+      });
+      const result = (await response.json()) as { error?: string };
+
+      if (response.ok) {
         router.push('/dashboard');
         return;
       }
 
-      setAuthError('Correo o contraseña incorrectos');
+      setAuthError(result.error ?? 'No se pudo iniciar sesión.');
+    } catch {
+      setAuthError('No se pudo conectar. Inténtalo de nuevo.');
+    } finally {
       setIsSubmitting(false);
-    }, 700);
+    }
   }
 
   return (
@@ -68,6 +74,9 @@ export default function LoginPage() {
           </h1>
           <p className="mt-3 text-sm leading-6 text-slate-300">
             Entra para mantener un margen con la finca.
+          </p>
+          <p className="mt-3 text-xs text-slate-400">
+            Cuenta de demostración: demo@poema.com / demo1234
           </p>
         </div>
 
@@ -150,13 +159,6 @@ export default function LoginPage() {
             {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
 
-          <a
-            className="block text-center text-sm text-blue-200 transition hover:text-white"
-            href="#"
-            onClick={(event) => event.preventDefault()}
-          >
-            Olvidé mi contraseña
-          </a>
         </form>
       </section>
     </main>
