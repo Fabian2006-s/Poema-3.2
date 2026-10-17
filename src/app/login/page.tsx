@@ -1,20 +1,23 @@
 'use client';
 
-import { FormEvent, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { FormEvent, Suspense, useState } from 'react';
+import Link from 'next/link';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 type FormErrors = {
   email?: string;
   password?: string;
 };
 
-export default function LoginPage() {
+function FormularioLogin() {
   const router = useRouter();
+  const parametros = useSearchParams();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [authError, setAuthError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const contrasenaRestablecida = parametros.get('restablecida') === '1';
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -78,6 +81,11 @@ export default function LoginPage() {
           <p className="mt-3 text-xs text-slate-400">
             Cuenta de demostración: demo@poema.com / demo1234
           </p>
+          {contrasenaRestablecida && (
+            <p className="mt-3 rounded-lg border border-emerald-300/20 bg-emerald-400/10 px-3 py-2 text-sm text-emerald-200" role="status">
+              Contraseña restablecida. Ya puedes iniciar sesión.
+            </p>
+          )}
         </div>
 
         <form className="space-y-5" onSubmit={handleSubmit} noValidate>
@@ -158,9 +166,22 @@ export default function LoginPage() {
           >
             {isSubmitting ? 'Entrando...' : 'Entrar'}
           </button>
-
+          <Link
+            className="block text-center text-sm text-blue-200 transition hover:text-white"
+            href="/recuperar-contrasena"
+          >
+            ¿Olvidaste tu contraseña?
+          </Link>
         </form>
       </section>
     </main>
+  );
+}
+
+export default function LoginPage() {
+  return (
+    <Suspense fallback={<main className="min-h-screen" />}>
+      <FormularioLogin />
+    </Suspense>
   );
 }

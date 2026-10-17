@@ -14,6 +14,8 @@
 /coverage
 /data/users.json
 /data/users.json.*.tmp
+/data/password-resets.json
+/data/password-resets.json.*.tmp
 
 # next.js
 /.next/

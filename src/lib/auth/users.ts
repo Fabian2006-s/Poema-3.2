@@ -140,3 +140,14 @@ export async function updateUserPassword(email: string, password: string): Promi
   await saveUsers(collection);
   return true;
 }
+
+export async function updateUserPasswordById(userId: string, password: string): Promise<boolean> {
+  const collection = await loadUsers();
+  const user = collection.records.find((record) => record.id === userId);
+  if (!user) return false;
+
+  user.passwordHash = await hashPassword(password);
+  user.updatedAt = new Date().toISOString();
+  await saveUsers(collection);
+  return true;
+}
