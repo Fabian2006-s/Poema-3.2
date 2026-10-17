@@ -34,3 +34,7 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+
+### Authentication storage
+
+Vercel deployments use Upstash Redis for persistent user records. Add a Redis store to the Vercel project and configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Also set `AUTH_SECRET` to a long random secret, plus `DEMO_USER_EMAIL` and `DEMO_USER_PASSWORD` for the first account created in the store. Redeploy after adding these variables. Password changes are then saved to Redis and remain available across deployments and serverless instances.

@@ -14,18 +14,26 @@ export async function POST(request: Request): Promise<Response> {
     return NextResponse.json({ error: 'Correo o contraseña incorrectos.' }, { status: 400 });
   }
 
-  const user = await findUserByEmail(body.email.trim().toLowerCase());
-  if (!user || !(await verifyPassword(body.password, user.passwordHash))) {
-    return NextResponse.json({ error: 'Correo o contraseña incorrectos.' }, { status: 401 });
-  }
+  try {
+    const user = await findUserByEmail(body.email.trim().toLowerCase());
+    if (!user || !(await verifyPassword(body.password, user.passwordHash))) {
+      return NextResponse.json({ error: 'Correo o contraseña incorrectos.' }, { status: 401 });
+    }
 
-  const response = NextResponse.json({ email: user.email });
-  response.cookies.set('poema_session', createSessionToken(user.email), {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
-    path: '/',
-    maxAge: 60 * 60 * 24 * 7,
-  });
-  return response;
+    const response = NextResponse.json({ email: user.email });
+    response.cookies.set('poema_session', createSessionToken(user.email), {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+    return response;
+  } catch (error) {
+    console.error('No se pudo completar el login:', error);
+    return NextResponse.json(
+      { error: 'El acceso no está configurado correctamente en el servidor.' },
+      { status: 503 },
+    );
+  }
 }
