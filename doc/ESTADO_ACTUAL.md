@@ -64,7 +64,7 @@ Hay login en `/login` (`src/app/login/page.tsx`) y `POST /api/auth/login`. Las c
 - `POEMA32_POSTGRES_URL`: pooler, puerto 6543.
 - `POEMA32_POSTGRES_URL_NON_POOLING`: conexión directa, puerto 5432.
 
-Se usará `POEMA32_POSTGRES_PRISMA_URL` para `pg` en serverless. La configuración sugiere que existe un proyecto Supabase asociado, pero la conectividad real aún no se ha probado. No hay cliente de BD en el código.
+La aplicación en serverless usará `POEMA32_POSTGRES_PRISMA_URL` (pooler). Los scripts locales de migración/verificación usan `POEMA32_POSTGRES_URL_NON_POOLING` (5432), porque en este entorno los URLs pooler agotaron el tiempo mientras el endpoint directo conectó correctamente. Las URLs contienen `sslmode=require`; se quita ese parámetro antes de crear el pool para que `pg` respete la configuración TLS explícita. M1 y M2 se aplicaron y verificaron correctamente en P01.
 
 ## 7. Datos existentes
 
@@ -72,7 +72,7 @@ Hay almacenamiento para las cuentas del login (Redis o archivo local) y para rec
 
 ## 8. Migraciones
 
-No existe directorio `supabase/`, mecanismo de migraciones ni scripts `db:*`. Se creará un ejecutor de migraciones en P01.
+P01 creó `supabase/migrations/001_finca_base.sql`, `002_finca_vistas_seguridad.sql`, `scripts/migrar.mjs` y `scripts/verificar-bd.mjs`. Ambas migraciones fueron aplicadas; las tablas, vistas, restricciones, RLS y pruebas de integridad se verificaron sin fallas.
 
 ## 9. Dominio de la finca
 
