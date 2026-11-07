@@ -1,15 +1,17 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
+import { useRouter } from 'next/navigation';
 import { Aviso } from '@/components/ui/Aviso';
 import { Boton } from '@/components/ui/Boton';
 import { Campo } from '@/components/ui/Campo';
 
 type RespuestaApi = {
-  error?: { mensaje?: string };
+  error?: { mensaje?: string } | string;
 };
 
-export function FormularioUsuario() {
+export function FormularioUsuario({ modoRegistro = false }: { modoRegistro?: boolean }) {
+  const router = useRouter();
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState('');
@@ -23,14 +25,23 @@ export function FormularioUsuario() {
     setGuardando(true);
 
     try {
-      const respuesta = await fetch('/api/auth/usuarios', {
+      const respuesta = await fetch(modoRegistro ? '/api/auth/registro' : '/api/auth/usuarios', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: correo, password: contrasena }),
       });
       const cuerpo = (await respuesta.json()) as RespuestaApi;
       if (!respuesta.ok) {
-        setError(cuerpo.error?.mensaje ?? 'No se pudo crear el usuario.');
+        setError(
+          typeof cuerpo.error === 'string'
+            ? cuerpo.error
+            : (cuerpo.error?.mensaje ?? 'No se pudo crear el usuario.'),
+        );
+        return;
+      }
+
+      if (modoRegistro) {
+        router.replace('/finca');
         return;
       }
 
@@ -47,8 +58,9 @@ export function FormularioUsuario() {
   return (
     <div className="grid gap-4">
       <Aviso tipo="advertencia">
-        Cada usuario puede administrar trabajadores e inventario. Crea cuentas solo para personas de
-        confianza y comparte la contraseña de forma segura.
+        {modoRegistro
+          ? 'Cada cuenta tiene acceso completo para administrar trabajadores e inventario.'
+          : 'Cada usuario puede administrar trabajadores e inventario. Crea cuentas solo para personas de confianza y comparte la contraseña de forma segura.'}
       </Aviso>
       {error && <Aviso tipo="error">{error}</Aviso>}
       {creado && <Aviso tipo="exito">{creado}</Aviso>}
@@ -81,7 +93,7 @@ export function FormularioUsuario() {
         </p>
         <div>
           <Boton cargando={guardando} type="submit">
-            Crear usuario
+            {modoRegistro ? 'Crear cuenta' : 'Crear usuario'}
           </Boton>
         </div>
       </form>

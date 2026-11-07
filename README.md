@@ -47,9 +47,10 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
 
 4. Abre <http://localhost:3000>.
 
-Desde el panel, usa **Crear usuario** para agregar otra cuenta. Solo los usuarios con sesión
-pueden hacerlo; todas las cuentas tienen acceso completo al inventario. Las contraseñas se
-almacenan como hashes, nunca en texto plano.
+En desarrollo local, el inicio de sesión ofrece **Crear una cuenta** y registra la cuenta con
+sesión iniciada. El registro público está deshabilitado en producción porque cada cuenta tiene
+acceso completo al inventario; allí, las personas autorizadas pueden usar **Crear usuario** desde
+el panel. Las contraseñas se almacenan como hashes, nunca en texto plano.
 
 Los scripts locales de administración de PostgreSQL usan `POEMA32_POSTGRES_URL_NON_POOLING`. La aplicación usa `POEMA32_POSTGRES_PRISMA_URL` cuando corresponde.
 
