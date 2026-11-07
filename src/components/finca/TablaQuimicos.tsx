@@ -7,19 +7,42 @@ import { Boton } from '@/components/ui/Boton';
 import { EstadoVacio } from '@/components/ui/EstadoVacio';
 import { InsigniaAlerta } from './InsigniaAlerta';
 import { InsigniaEstado } from './InsigniaEstado';
+import { Selector } from '@/components/ui/Selector';
 
 export function TablaQuimicos({
   quimicos,
   soloBajos,
   soloPorVencer,
+  categoria,
+  estado,
 }: {
   quimicos: Quimico[];
   soloBajos: boolean;
   soloPorVencer: boolean;
+  categoria: string;
+  estado: Quimico['estado'] | '';
 }) {
   return (
     <div className="grid gap-4">
       <form action="/finca/quimicos" className="flex flex-wrap items-end gap-4" method="get">
+        <label className="grid gap-1.5 text-sm font-medium text-texto" htmlFor="categoria-quimico">
+          Categoría
+          <input
+            className="min-h-11 rounded-lg border border-borde bg-superficie px-3 py-2 text-texto"
+            defaultValue={categoria}
+            id="categoria-quimico"
+            maxLength={60}
+            name="categoria"
+            placeholder="Todas las categorías"
+          />
+        </label>
+        <Selector defaultValue={estado} etiqueta="Estado" id="estado-quimico" name="estado">
+          <option value="">Todos los estados</option>
+          <option value="disponible">Disponible</option>
+          <option value="agotado">Agotado</option>
+          <option value="vencido">Vencido</option>
+          <option value="inactivo">Inactivo</option>
+        </Selector>
         <label className="flex min-h-11 items-center gap-2 text-sm font-medium text-texto">
           <input
             className="size-4 accent-primario focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario"
@@ -38,7 +61,7 @@ export function TablaQuimicos({
             type="checkbox"
             value="true"
           />
-          Próximos a vencer
+          Próximos a vencer y vencidos
         </label>
         <Boton type="submit" variante="secundario">Aplicar filtros</Boton>
       </form>

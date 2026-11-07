@@ -135,8 +135,8 @@ export async function listarMovimientos(filtros: OpcionalesConUndefined<{
   const condiciones: string[] = [];
   const valores: unknown[] = [];
   const filtrosSql = [
-    ['m.tipo_elemento', filtros.tipoElemento],
-    ['m.elemento_id', filtros.elementoId],
+    ['m.tipo_elemento =', filtros.tipoElemento],
+    ['m.elemento_id =', filtros.elementoId],
     ['m.fecha >=', filtros.desde],
     ['m.fecha <=', filtros.hasta],
   ] as const;

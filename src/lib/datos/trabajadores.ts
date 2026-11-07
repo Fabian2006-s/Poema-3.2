@@ -19,6 +19,7 @@ function esUnicoDuplicado(error: unknown): boolean {
 export async function listarTrabajadores(filtros: OpcionalesConUndefined<{
   estado?: EstadoTrabajador;
   incluirInactivos?: boolean;
+  cargo?: string;
 }> = {}): Promise<Trabajador[]> {
   const condiciones: string[] = [];
   const valores: unknown[] = [];
@@ -27,6 +28,10 @@ export async function listarTrabajadores(filtros: OpcionalesConUndefined<{
     condiciones.push(`estado = $${valores.length}`);
   } else if (!filtros.incluirInactivos) {
     condiciones.push("estado = 'activo'");
+  }
+  if (filtros.cargo) {
+    valores.push(filtros.cargo);
+    condiciones.push(`cargo = $${valores.length}`);
   }
 
   valores.push(500);
@@ -38,6 +43,15 @@ export async function listarTrabajadores(filtros: OpcionalesConUndefined<{
       LIMIT $${valores.length}`,
     valores,
   );
+}
+
+export async function buscarTrabajadorPorId(id: string): Promise<Trabajador | undefined> {
+  const filas = await consultar<TrabajadorFila>(
+    `SELECT id, nombre, documento, cargo, telefono, estado
+       FROM trabajadores WHERE id = $1`,
+    [id],
+  );
+  return filas[0];
 }
 
 export async function crearTrabajador(datos: DatosTrabajador): Promise<{ id: string }> {

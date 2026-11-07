@@ -16,6 +16,8 @@ export const dynamic = 'force-dynamic';
 const esquemaFiltrosImplemento = esquemaFiltros.pick({
   incluirInactivos: true,
   soloBajos: true,
+  categoria: true,
+  estadoElemento: true,
 });
 
 export const GET = conManejoDeErrores(async (request: Request) => {

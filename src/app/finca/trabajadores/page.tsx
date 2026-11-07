@@ -9,15 +9,18 @@ export const dynamic = 'force-dynamic';
 export default async function TrabajadoresPage({
   searchParams,
 }: {
-  searchParams: Promise<{ estado?: string }>;
+  searchParams: Promise<{ estado?: string; cargo?: string }>;
 }) {
   const parametros = await searchParams;
+  const cargo = parametros.cargo?.trim() || undefined;
   const filtro: EstadoFiltro =
     parametros.estado === 'inactivo' || parametros.estado === 'todos'
       ? parametros.estado
       : 'activo';
   const trabajadores = await listarTrabajadores(
-    filtro === 'todos' ? { incluirInactivos: true } : { estado: filtro },
+    filtro === 'todos'
+      ? { incluirInactivos: true, cargo }
+      : { estado: filtro, cargo },
   );
 
   return (
@@ -35,7 +38,7 @@ export default async function TrabajadoresPage({
           Nuevo trabajador
         </Link>
       </header>
-      <TablaTrabajadores filtro={filtro} trabajadores={trabajadores} />
+      <TablaTrabajadores cargo={cargo ?? ''} filtro={filtro} trabajadores={trabajadores} />
     </div>
   );
 }

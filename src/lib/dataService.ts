@@ -220,16 +220,29 @@ export async function cambiarContrasenaUsuario(usuarioId: string, password: stri
 }
 
 export { listarAlertas } from '@/lib/datos/alertas';
+export {
+  asignarImplemento,
+  implementosDeTrabajador,
+  listarAsignaciones,
+  registrarDevolucion,
+} from '@/lib/datos/asignaciones';
 export { crearImplemento, actualizarImplemento, listarImplementos } from '@/lib/datos/implementos';
 export { listarMovimientos, registrarMovimiento } from '@/lib/datos/movimientos';
 export { crearQuimico, actualizarQuimico, listarQuimicos } from '@/lib/datos/quimicos';
-export { crearTrabajador, actualizarTrabajador, listarTrabajadores } from '@/lib/datos/trabajadores';
+export {
+  actualizarTrabajador,
+  buscarTrabajadorPorId,
+  crearTrabajador,
+  listarTrabajadores,
+} from '@/lib/datos/trabajadores';
 export { cerrarPool } from '@/lib/datos/conexion';
 export type {
   Asignacion,
+  AsignacionDetalle,
   DatosMovimiento,
   ElementoAlerta,
   Implemento,
+  ImplementoAsignado,
   Movimiento,
   Quimico,
   ResultadoMovimiento,

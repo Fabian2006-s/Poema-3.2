@@ -12,6 +12,9 @@ const enlaces = [
   { href: '/finca/implementos', etiqueta: 'Implementos' },
   { href: '/finca/quimicos', etiqueta: 'Químicos' },
   { href: '/finca/movimientos/nuevo', etiqueta: 'Movimiento' },
+  { href: '/finca/movimientos', etiqueta: 'Historial' },
+  { href: '/finca/asignaciones', etiqueta: 'Asignaciones' },
+  { href: '/finca/inventario', etiqueta: 'Reporte' },
 ];
 
 export function NavegacionFinca({ correo }: { correo: string }) {
@@ -44,7 +47,7 @@ export function NavegacionFinca({ correo }: { correo: string }) {
         <button
           aria-expanded={menuAbierto}
           aria-label={menuAbierto ? 'Cerrar menú' : 'Abrir menú'}
-          className="rounded-md border border-white/40 px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white lg:hidden"
+          className="rounded-md border border-white/40 px-3 py-2 text-sm font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white xl:hidden"
           onClick={() => setMenuAbierto((abierto) => !abierto)}
           type="button"
         >
@@ -52,14 +55,14 @@ export function NavegacionFinca({ correo }: { correo: string }) {
         </button>
         <nav
           aria-label="Navegación principal"
-          className={`${menuAbierto ? 'flex' : 'hidden'} absolute top-16 right-0 left-0 z-10 flex-col gap-1 bg-primario p-4 shadow-lg lg:static lg:flex lg:flex-1 lg:flex-row lg:items-center lg:justify-end lg:bg-transparent lg:p-0 lg:shadow-none`}
+          className={`${menuAbierto ? 'flex' : 'hidden'} absolute top-16 right-0 left-0 z-10 flex-col gap-1 bg-primario p-4 shadow-lg xl:static xl:flex xl:flex-1 xl:flex-row xl:items-center xl:justify-end xl:gap-0 xl:bg-transparent xl:p-0 xl:shadow-none`}
         >
           {enlaces.map(({ href, etiqueta }) => {
             const activo = href === '/finca' ? ruta === href : ruta?.startsWith(href);
             return (
               <Link
                 aria-current={activo ? 'page' : undefined}
-                className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white ${activo ? 'bg-white/15' : ''}`}
+                className={`rounded-md px-3 py-2 text-sm font-medium hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-white xl:px-2 xl:text-xs 2xl:px-3 2xl:text-sm ${activo ? 'bg-white/15' : ''}`}
                 href={href}
                 key={href}
                 onClick={() => setMenuAbierto(false)}
@@ -68,7 +71,7 @@ export function NavegacionFinca({ correo }: { correo: string }) {
               </Link>
             );
           })}
-          <span className="px-3 py-2 text-xs text-white/80 lg:ml-2">{correo}</span>
+          <span className="px-3 py-2 text-xs text-white/80 xl:ml-1">{correo}</span>
           <Boton
             cargando={cerrando}
             className="border border-white/40 !text-white hover:bg-white/15"

@@ -1,18 +1,35 @@
 import Link from 'next/link';
 import { listarQuimicos } from '@/lib/dataService';
 import { TablaQuimicos } from '@/components/finca/TablaQuimicos';
+import type { Quimico } from '@/lib/dataService';
 
 export const dynamic = 'force-dynamic';
 
 export default async function QuimicosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ soloBajos?: string; soloPorVencer?: string }>;
+  searchParams: Promise<{
+    soloBajos?: string;
+    soloPorVencer?: string;
+    categoria?: string;
+    estado?: string;
+  }>;
 }) {
   const parametros = await searchParams;
   const soloBajos = parametros.soloBajos === 'true';
   const soloPorVencer = parametros.soloPorVencer === 'true';
-  const quimicos = await listarQuimicos({ soloBajos, soloPorVencer });
+  const categoria = parametros.categoria?.trim() ?? '';
+  const estados: Quimico['estado'][] = ['disponible', 'agotado', 'vencido', 'inactivo'];
+  const estado = estados.includes(parametros.estado as Quimico['estado'])
+    ? (parametros.estado as Quimico['estado'])
+    : '';
+  const quimicos = await listarQuimicos({
+    soloBajos,
+    soloPorVencer,
+    categoria: categoria || undefined,
+    estadoElemento: estado || undefined,
+    incluirInactivos: estado === 'inactivo',
+  });
 
   return (
     <div className="grid gap-6">
@@ -30,7 +47,9 @@ export default async function QuimicosPage({
         </Link>
       </header>
       <TablaQuimicos
+        categoria={categoria}
         quimicos={quimicos}
+        estado={estado}
         soloBajos={soloBajos}
         soloPorVencer={soloPorVencer}
       />

@@ -16,6 +16,7 @@ export const dynamic = 'force-dynamic';
 const esquemaFiltrosTrabajador = esquemaFiltros.pick({
   estado: true,
   incluirInactivos: true,
+  cargo: true,
 });
 
 export const GET = conManejoDeErrores(async (request: Request) => {

@@ -37,11 +37,17 @@ function mapearImplemento(fila: ImplementoFila, hoy: string): Implemento {
 export async function listarImplementos(filtros: OpcionalesConUndefined<{
   soloBajos?: boolean;
   incluirInactivos?: boolean;
+  categoria?: string;
+  estadoElemento?: Implemento['estado'];
 }> = {}): Promise<Implemento[]> {
   const condiciones: string[] = [];
   const valores: unknown[] = [];
   if (!filtros.incluirInactivos) condiciones.push('inactivo = false');
   if (filtros.soloBajos) condiciones.push('inventario_bajo = true');
+  if (filtros.categoria) {
+    valores.push(filtros.categoria);
+    condiciones.push(`categoria = $${valores.length}`);
+  }
   valores.push(LIMITE_LISTADO);
   const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
   const filas = await consultar<ImplementoFila>(
@@ -52,7 +58,9 @@ export async function listarImplementos(filtros: OpcionalesConUndefined<{
     valores,
   );
   const hoy = hoyBogota();
-  return filas.map((fila) => mapearImplemento(fila, hoy));
+  return filas
+    .map((fila) => mapearImplemento(fila, hoy))
+    .filter((implemento) => !filtros.estadoElemento || implemento.estado === filtros.estadoElemento);
 }
 
 export async function crearImplemento(

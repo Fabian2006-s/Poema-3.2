@@ -11,7 +11,7 @@
 | P06 | Completado | Panel, navegación, componentes UI y gestión de trabajadores; creación, duplicado y desactivación verificados con sesión; vista móvil sin desbordamiento; build y 49 pruebas correctos. |
 | P07 | Completado | Inventario de implementos y químicos implementado; creado implemento y químico de 2,5 litros, duplicados rechazados, alertas/filtros revisados en móvil; build, 49 pruebas y `db:verificar` correctos. |
 | P08 | Completado | Formulario de movimientos, `doc/ACEPTACION.md`, README y checkpoints de fases 5–6; build, 50 pruebas y flujo de 15 casos correctos. |
-| P09 | Pendiente | — |
+| P09 | Completado localmente | Asignaciones y devoluciones transaccionales, historial filtrable, detalle de implementos por trabajador, filtros y reporte CSV; pruebas y compilación correctas. Validación de despliegue pendiente. |
 
 ## Bitácora
 
@@ -97,3 +97,14 @@
 - `.env.local` está ignorado por Git y el escaneo de archivos versionados no encontró asignaciones con valores de variables de entorno.
 - Actualizados `README.md`, `doc/ACEPTACION.md` y los checkpoints `FASE_5_COMPLETADA.md` y `FASE_6_COMPLETADA.md`. A-01 a A-14 quedan para validación en Vercel; A-15 a A-18 son opcionales de P09.
 - `npm run build`: correcto; permanecen dos advertencias preexistentes de trazado dinámico del sistema de archivos. El push del commit P08 fue rechazado por GitHub con HTTP 403 (permiso denegado para `Valerie-Gisell`); el commit queda guardado localmente.
+
+### P09 · 2026-11-07 · Completado localmente
+
+- Implementadas asignaciones y devoluciones transaccionales; las asignaciones exigen trabajador activo y stock suficiente, y el detalle del trabajador lista sus implementos entregados.
+- Verificado con sesión local: asignar 2 Demo Guantes a Demo Ana bajó el saldo de 8 a 6; el trabajador inactivo fue rechazado con `TRABAJADOR_INACTIVO`; la devolución restauró el saldo a 8, y una segunda devolución recibió 409 `ASIGNACION_NO_DEVOLUCION`.
+- El historial filtrado por elemento y fechas mostró el movimiento esperado. Se incorporaron filtros por estado/categoría/cargo, alertas de químicos próximos y vencidos, y reporte consolidado.
+- La exportación autenticada devolvió HTTP 200, `text/csv` y `Content-Disposition: attachment`. La automatización no capturó el evento de descarga del navegador; queda confirmarlo manualmente.
+- Rutas principales de P09 verificadas a 375, 640, 1024 y 1280 px, sin desbordamiento horizontal.
+- Se eliminaron los registros temporales. `npm run db:verificar`: 0 fallas; quedan 2 trabajadores, 2 implementos, 3 químicos, 2 movimientos y 0 asignaciones.
+- `npm test`: 11 archivos, 50 pruebas correctas; `npx tsc --noEmit` y ESLint enfocado correctos. `npm run build`: correcto; siguen dos advertencias preexistentes de trazado dinámico.
+- A-15 a A-18 documentados en `doc/ACEPTACION.md`. La verificación local no certifica el despliegue; repetir los casos en Vercel.

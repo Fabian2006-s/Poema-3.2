@@ -6,17 +6,44 @@ import { Boton } from '@/components/ui/Boton';
 import { EstadoVacio } from '@/components/ui/EstadoVacio';
 import { InsigniaAlerta } from './InsigniaAlerta';
 import { InsigniaEstado } from './InsigniaEstado';
+import { Selector } from '@/components/ui/Selector';
 
 export function TablaImplementos({
   implementos,
   soloBajos,
+  categoria,
+  estado,
 }: {
   implementos: Implemento[];
   soloBajos: boolean;
+  categoria: string;
+  estado: Implemento['estado'] | '';
 }) {
   return (
     <div className="grid gap-4">
       <form action="/finca/implementos" className="flex flex-wrap items-end gap-3" method="get">
+        <label className="grid gap-1.5 text-sm font-medium text-texto" htmlFor="categoria-implemento">
+          Categoría
+          <input
+            className="min-h-11 rounded-lg border border-borde bg-superficie px-3 py-2 text-texto"
+            defaultValue={categoria}
+            id="categoria-implemento"
+            maxLength={60}
+            name="categoria"
+            placeholder="Todas las categorías"
+          />
+        </label>
+        <Selector
+          defaultValue={estado}
+          etiqueta="Estado"
+          id="estado-implemento"
+          name="estado"
+        >
+          <option value="">Todos los estados</option>
+          <option value="disponible">Disponible</option>
+          <option value="agotado">Agotado</option>
+          <option value="inactivo">Inactivo</option>
+        </Selector>
         <label className="flex min-h-11 items-center gap-2 text-sm font-medium text-texto">
           <input
             className="size-4 accent-primario focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario"
@@ -31,7 +58,7 @@ export function TablaImplementos({
       </form>
       {implementos.length === 0 ? (
         <EstadoVacio
-          descripcion={soloBajos ? 'No hay implementos por debajo del mínimo.' : 'Registra el primer implemento para comenzar.'}
+          descripcion={soloBajos ? 'No hay implementos por debajo del mínimo.' : 'Cambia los filtros o registra un implemento.'}
           titulo={soloBajos ? 'Sin alertas de inventario bajo' : 'No hay implementos'}
         />
       ) : (

@@ -14,6 +14,8 @@ const esquemaFiltrosQuimico = esquemaFiltros.pick({
   incluirInactivos: true,
   soloBajos: true,
   soloPorVencer: true,
+  categoria: true,
+  estadoElemento: true,
 });
 
 export const GET = conManejoDeErrores(async (request: Request) => {

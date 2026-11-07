@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import type { Trabajador } from '@/lib/dataService';
@@ -13,9 +14,11 @@ import { InsigniaEstado } from './InsigniaEstado';
 export function TablaTrabajadores({
   trabajadores,
   filtro,
+  cargo,
 }: {
   trabajadores: Trabajador[];
   filtro: 'activo' | 'inactivo' | 'todos';
+  cargo: string;
 }) {
   const router = useRouter();
   const [seleccionado, setSeleccionado] = useState<Trabajador | null>(null);
@@ -56,6 +59,17 @@ export function TablaTrabajadores({
           <option value="inactivo">Inactivos</option>
           <option value="todos">Todos</option>
         </Selector>
+        <label className="grid gap-1.5 text-sm font-medium text-texto" htmlFor="cargo-filtro">
+          Cargo
+          <input
+            className="min-h-11 rounded-lg border border-borde bg-superficie px-3 py-2 text-texto"
+            defaultValue={cargo}
+            id="cargo-filtro"
+            maxLength={80}
+            name="cargo"
+            placeholder="Todos los cargos"
+          />
+        </label>
         <Boton type="submit" variante="secundario">
           Aplicar filtro
         </Boton>
@@ -83,7 +97,11 @@ export function TablaTrabajadores({
               <tbody className="divide-y divide-borde">
                 {trabajadores.map((trabajador) => (
                   <tr key={trabajador.id}>
-                    <td className="px-4 py-3 font-medium text-texto">{trabajador.nombre}</td>
+                    <td className="px-4 py-3 font-medium">
+                      <Link className="text-primario underline-offset-4 hover:underline" href={`/finca/trabajadores/${trabajador.id}`}>
+                        {trabajador.nombre}
+                      </Link>
+                    </td>
                     <td className="px-4 py-3 text-texto">{trabajador.documento}</td>
                     <td className="px-4 py-3 text-texto">{trabajador.cargo}</td>
                     <td className="px-4 py-3 text-texto">{trabajador.telefono || '—'}</td>
@@ -106,7 +124,9 @@ export function TablaTrabajadores({
               <li className="rounded-lg border border-borde bg-superficie p-4" key={trabajador.id}>
                 <div className="flex flex-wrap items-start justify-between gap-3">
                   <div>
-                    <h2 className="font-semibold text-texto">{trabajador.nombre}</h2>
+                    <h2 className="font-semibold text-primario">
+                      <Link href={`/finca/trabajadores/${trabajador.id}`}>{trabajador.nombre}</Link>
+                    </h2>
                     <p className="mt-1 text-sm text-texto-suave">{trabajador.cargo}</p>
                   </div>
                   <InsigniaEstado estado={trabajador.estado} />

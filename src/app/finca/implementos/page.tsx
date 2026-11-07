@@ -1,17 +1,28 @@
 import Link from 'next/link';
 import { listarImplementos } from '@/lib/dataService';
 import { TablaImplementos } from '@/components/finca/TablaImplementos';
+import type { Implemento } from '@/lib/dataService';
 
 export const dynamic = 'force-dynamic';
 
 export default async function ImplementosPage({
   searchParams,
 }: {
-  searchParams: Promise<{ soloBajos?: string }>;
+  searchParams: Promise<{ soloBajos?: string; categoria?: string; estado?: string }>;
 }) {
   const parametros = await searchParams;
   const soloBajos = parametros.soloBajos === 'true';
-  const implementos = await listarImplementos({ soloBajos });
+  const categoria = parametros.categoria?.trim() ?? '';
+  const estados: Implemento['estado'][] = ['disponible', 'agotado', 'vencido', 'inactivo'];
+  const estado = estados.includes(parametros.estado as Implemento['estado'])
+    ? (parametros.estado as Implemento['estado'])
+    : '';
+  const implementos = await listarImplementos({
+    soloBajos,
+    categoria: categoria || undefined,
+    estadoElemento: estado || undefined,
+    incluirInactivos: estado === 'inactivo',
+  });
 
   return (
     <div className="grid gap-6">
@@ -28,7 +39,12 @@ export default async function ImplementosPage({
           Nuevo implemento
         </Link>
       </header>
-      <TablaImplementos implementos={implementos} soloBajos={soloBajos} />
+      <TablaImplementos
+        categoria={categoria}
+        estado={estado}
+        implementos={implementos}
+        soloBajos={soloBajos}
+      />
     </div>
   );
 }

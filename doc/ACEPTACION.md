@@ -4,23 +4,25 @@ Completa las columnas de resultado, evidencia y observación al verificar cada c
 
 | ID | Acción | Resultado esperado | Resultado obtenido | Evidencia | Observación |
 |---|---|---|---|---|---|
-| A-01 | Abrir `/finca` sin sesión | Redirección al login |  |  |  |
-| A-02 | Registrar el trabajador "Juan" (documento 123) | Aparece en Trabajadores |  |  |  |
-| A-03 | Intentar otro trabajador con documento 123 | Rechazo por duplicado |  |  |  |
-| A-04 | Registrar el implemento "Guantes" (10 unidades, mínima 5) | Aparece con 10 disponibles |  |  |  |
-| A-05 | Registrar el químico "Fungicida" (2,5 litros, mínima 1, vence en 40 días) | Aparece con 2,5 litros, disponible |  |  |  |
-| A-06 | Registrar una salida de 5 guantes | Disponible 5; se activa la alerta de inventario bajo |  |  |  |
-| A-07 | Intentar una salida de 10 guantes | Rechazo por cantidad insuficiente |  |  |  |
-| A-08 | Registrar una salida de 1,5 litros de fungicida | Disponible 1,0 litro, sin error de redondeo |  |  |  |
-| A-09 | Intentar un movimiento con cantidad 0 o sin motivo | Rechazo con mensaje claro |  |  |  |
-| A-10 | Registrar un químico vencido e intentar una salida | Se marca vencido y la salida se rechaza |  |  |  |
-| A-11 | Registrar un químico que vence en 30 días | Aparece como próximo a vencer |  |  |  |
-| A-12 | Ver el panel de alertas | Lista los de inventario bajo, por vencer y vencidos |  |  |  |
-| A-13 | Consultar existencias de implementos y químicos | Muestra cantidades, unidades y estados |  |  |  |
-| A-14 | Cerrar el navegador y volver a entrar | Los datos persisten (RNF-07) |  |  |  |
-| A-15 | (Opcional) Asignar guantes a un trabajador activo | Descuenta del inventario; queda asignado |  |  |  |
-| A-16 | (Opcional) Intentar asignar a un trabajador inactivo | Rechazo |  |  |  |
-| A-17 | (Opcional) Registrar la devolución | Suma la cantidad de nuevo al inventario |  |  |  |
-| A-18 | (Opcional) Ver el historial de movimientos | Lista con fecha, elemento, cantidad y motivo |  |  |  |
+| A-01 | Abrir `/finca` sin sesión | Redirección al login | Cumplido localmente: redirige a `/login`. | Verificación de rutas protegidas P03 en `doc/ESTADO_EJECUCION.md`. | Repetir en Vercel. |
+| A-02 | Registrar el trabajador "Juan" (documento 123) | Aparece en Trabajadores | Cumplido con registro de prueba equivalente; se creó el trabajador y apareció en la lista. | Prueba del flujo, caso 1; validación autenticada P06. | Se usó `Prueba Juan`/`PT-1` para no ocupar datos demo; repetir en Vercel. |
+| A-03 | Intentar otro trabajador con documento 123 | Rechazo por duplicado | Cumplido con el documento de prueba equivalente; rechazado como duplicado. | Prueba del flujo, caso 2; respuesta 409 en pruebas autenticadas P05. | Repetir en Vercel. |
+| A-04 | Registrar el implemento "Guantes" (10 unidades, mínima 5) | Aparece con 10 disponibles | Cumplido con implemento de prueba equivalente; creado con 10 unidades. | Prueba del flujo, casos 3 y 5–7. | Repetir en Vercel. |
+| A-05 | Registrar el químico "Fungicida" (2,5 litros, mínima 1, vence en 40 días) | Aparece con 2,5 litros, disponible | Cumplido con químico de prueba equivalente; mostró 2,5 litros y estado disponible. | Prueba del flujo, caso 4; verificación de interfaz P07. | Repetir en Vercel. |
+| A-06 | Registrar una salida de 5 guantes | Disponible 5; se activa la alerta de inventario bajo | Cumplido: dos salidas dejaron la existencia exactamente en 5 y activaron inventario bajo. | Prueba del flujo, casos 5–6; validación de interfaz P08. | Se ejecutaron 4 + 1 unidades; repetir en Vercel. |
+| A-07 | Intentar una salida de 10 guantes | Rechazo por cantidad insuficiente | Cumplido: la salida mayor a la existencia fue rechazada y no alteró el saldo. | Prueba del flujo, caso 7; API 409 `CANTIDAD_INSUFICIENTE`. | Repetir en Vercel. |
+| A-08 | Registrar una salida de 1,5 litros de fungicida | Disponible 1,0 litro, sin error de redondeo | Cumplido: 2,5 − 1,5 dejó 1,0 litro. | Prueba del flujo, caso 8; validación de UI P08. | Repetir en Vercel. |
+| A-09 | Intentar un movimiento con cantidad 0 o sin motivo | Rechazo con mensaje claro | Cumplido: cantidad cero y motivo vacío fueron rechazados. | Prueba del flujo, casos 10–11. | Repetir en Vercel. |
+| A-10 | Registrar un químico vencido e intentar una salida | Se marca vencido y la salida se rechaza | Cumplido: el químico quedó vencido y la salida fue rechazada con `QUIMICO_VENCIDO`. | Prueba del flujo, casos 12–13; validación de UI P08. | Repetir en Vercel. |
+| A-11 | Registrar un químico que vence en 30 días | Aparece como próximo a vencer | Cumplido: se clasificó como próximo a vencer en el límite de 30 días. | Prueba del flujo, casos 14–15; tabla de químicos P07. | Repetir en Vercel. |
+| A-12 | Ver el panel de alertas | Lista los de inventario bajo, por vencer y vencidos | Cumplido localmente: el panel presenta las tres categorías; ahora enlaza además al filtro de químicos próximos/vencidos. | P06/P07; flujo de alertas, caso 15; revisión del panel P09. | Repetir en Vercel. |
+| A-13 | Consultar existencias de implementos y químicos | Muestra cantidades, unidades y estados | Cumplido localmente: tablas muestran saldo, unidades químicas, estados y alertas. | Verificación de UI P07 y P08; `db:verificar` sin fallas. | Repetir en Vercel. |
+| A-14 | Cerrar el navegador y volver a entrar | Los datos persisten (RNF-07) | Cumplido en entorno local: los registros demo permanecieron en Postgres y se conservaron tras limpieza/refresco. | `npm run db:verificar`: 2 trabajadores, 2 implementos, 3 químicos y 2 movimientos demo. | Repetir en Vercel; no se afirma validación en producción. |
+| A-15 | (Opcional) Asignar guantes a un trabajador activo | Descuenta del inventario; queda asignado | Cumplido localmente: asignar 2 guantes a Demo Ana redujo el saldo de 8 a 6 y apareció en el detalle del trabajador. | `/finca/asignaciones` y `/finca/trabajadores/[id]`; API autenticada. | La asignación temporal se devolvió y limpió al terminar; repetir en Vercel. |
+| A-16 | (Opcional) Intentar asignar a un trabajador inactivo | Rechazo | Cumplido localmente: el intento fue rechazado con `TRABAJADOR_INACTIVO`. | POST autenticado a `/api/finca/asignaciones`. | Se limpió el trabajador temporal; repetir en Vercel. |
+| A-17 | (Opcional) Registrar la devolución | Suma la cantidad de nuevo al inventario | Cumplido localmente: devolver los 2 guantes restauró el saldo a 8 y la asignación quedó `devuelto`; una segunda devolución recibió 409 `ASIGNACION_NO_DEVOLUCION`. | POST autenticado a `/api/finca/asignaciones/[id]/devolver`. | Los registros de verificación se limpiaron; repetir en Vercel. |
+| A-18 | (Opcional) Ver el historial de movimientos | Lista con fecha, elemento, cantidad y motivo | Cumplido localmente: el historial mostró el movimiento de Demo Guantes y el filtro por elemento/fechas devolvió el resultado esperado. | `/finca/movimientos`, verificado con filtro por elemento y rango de fechas. | Repetir en Vercel. |
 
-A-15 a A-18 corresponden a funcionalidades opcionales de P09. Los casos A-01 a A-14 se deben ejecutar en el despliegue de Vercel.
+A-15 a A-18 corresponden a funcionalidades opcionales de P09. Los resultados A-01 a A-14 de esta tabla son evidencias de pruebas locales; se deben repetir y confirmar en el despliegue de Vercel antes de certificar la aceptación de producción.
+
+El reporte de `/finca/inventario` mostró los cinco elementos demo y sus saldos, estados y alertas. El endpoint autenticado de exportación respondió 200 con CSV y encabezado de descarga; la automatización del navegador no capturó el evento de descarga, por lo que esa interacción debe confirmarse manualmente.

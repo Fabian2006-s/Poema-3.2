@@ -54,11 +54,14 @@ export const esquemaAsignacion = z.object({
 
 export const esquemaFiltros = z.object({
   estado: z.enum(['activo', 'inactivo']).optional(),
+  estadoElemento: z.enum(['disponible', 'agotado', 'vencido', 'inactivo']).optional(),
   incluirInactivos: filtroBooleano.optional(),
   soloBajos: filtroBooleano.optional(),
   soloPorVencer: filtroBooleano.optional(),
   tipoElemento: z.enum(['implemento', 'quimico']).optional(),
   elementoId: z.uuid().optional(),
+  categoria: nombre(60).optional(),
+  cargo: nombre(80).optional(),
   desde: fecha.optional(),
   hasta: fecha.optional(),
 });

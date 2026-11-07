@@ -69,6 +69,21 @@ export type Asignacion = {
   estado: 'entregado' | 'devuelto';
 };
 
+export type AsignacionDetalle = Asignacion & {
+  trabajadorNombre: string;
+  implementoNombre: string;
+  categoria: string;
+};
+
+export type ImplementoAsignado = {
+  asignacionId: string;
+  implementoId: string;
+  nombre: string;
+  categoria: string;
+  cantidad: number;
+  fecha: string;
+};
+
 export type ElementoAlerta =
   | ({ tipoElemento: 'implemento' } & Implemento)
   | ({ tipoElemento: 'quimico' } & Quimico);

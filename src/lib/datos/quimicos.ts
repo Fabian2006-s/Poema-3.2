@@ -48,23 +48,37 @@ export async function listarQuimicos(filtros: OpcionalesConUndefined<{
   soloBajos?: boolean;
   soloPorVencer?: boolean;
   incluirInactivos?: boolean;
+  categoria?: string;
+  estadoElemento?: Quimico['estado'];
 }> = {}): Promise<Quimico[]> {
   const condiciones: string[] = [];
   if (!filtros.incluirInactivos) condiciones.push('inactivo = false');
+  const valores: unknown[] = [];
+  if (filtros.categoria) {
+    valores.push(filtros.categoria);
+    condiciones.push(`categoria = $${valores.length}`);
+  }
   const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
+  valores.push(LIMITE_LISTADO);
   const filas = await consultar<QuimicoFila>(
     `SELECT id, nombre, categoria, disponible_cent, minima_cent, unidad,
             fecha_vencimiento, inactivo
        FROM v_quimicos ${where}
       ORDER BY nombre
-      LIMIT $1`,
-    [LIMITE_LISTADO],
+      LIMIT $${valores.length}`,
+    valores,
   );
   const hoy = hoyBogota();
   return filas
     .map((fila) => mapearQuimico(fila, hoy))
     .filter((quimico) => !filtros.soloBajos || quimico.inventarioBajo)
-    .filter((quimico) => !filtros.soloPorVencer || quimico.nivelVencimiento === 'proximo');
+    .filter(
+      (quimico) =>
+        !filtros.soloPorVencer ||
+        quimico.nivelVencimiento === 'proximo' ||
+        quimico.nivelVencimiento === 'vencido',
+    )
+    .filter((quimico) => !filtros.estadoElemento || quimico.estado === filtros.estadoElemento);
 }
 
 export async function crearQuimico(

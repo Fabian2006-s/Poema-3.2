@@ -42,6 +42,14 @@ export function PanelAlertas({ alertas }: { alertas: Alertas }) {
         ) : (
           <EstadoVacio descripcion="No hay elementos por debajo del mínimo." titulo="Inventario suficiente" />
         )}
+        <div className="mt-4 flex flex-wrap gap-3 text-sm font-semibold text-primario">
+          <Link className="underline-offset-4 hover:underline" href="/finca/implementos?soloBajos=true">
+            Ver implementos bajos
+          </Link>
+          <Link className="underline-offset-4 hover:underline" href="/finca/quimicos?soloBajos=true">
+            Ver químicos bajos
+          </Link>
+        </div>
       </Tarjeta>
 
       <Tarjeta className="h-full" titulo={`Próximos a vencer (${porVencer.length})`}>
@@ -62,6 +70,12 @@ export function PanelAlertas({ alertas }: { alertas: Alertas }) {
         ) : (
           <EstadoVacio descripcion="No hay químicos próximos a vencer." titulo="Sin vencimientos próximos" />
         )}
+        <Link
+          className="mt-4 inline-block text-sm font-semibold text-primario underline-offset-4 hover:underline"
+          href="/finca/quimicos?soloPorVencer=true"
+        >
+          Ver próximos y vencidos
+        </Link>
       </Tarjeta>
 
       <Tarjeta className="h-full" titulo={`Vencidos (${vencidos.length})`}>
@@ -82,6 +96,12 @@ export function PanelAlertas({ alertas }: { alertas: Alertas }) {
         ) : (
           <EstadoVacio descripcion="No hay químicos vencidos." titulo="Sin químicos vencidos" />
         )}
+        <Link
+          className="mt-4 inline-block text-sm font-semibold text-primario underline-offset-4 hover:underline"
+          href="/finca/quimicos?soloPorVencer=true"
+        >
+          Ver químicos vencidos
+        </Link>
       </Tarjeta>
       <Link
         className="text-sm font-semibold text-primario underline-offset-4 hover:underline lg:col-span-3"
