@@ -5,7 +5,7 @@
 | P00 | Completado | `ESTADO_ACTUAL.md`, `DICTAMEN.md`, instrucciones Copilot y checkpoint de fase 0; `npm run build` correcto. |
 | P01 | Completado | M1/M2 aplicadas; `db:verificar`: 0 fallas; build correcto. |
 | P02 | Completado | 34 pruebas de reglas; suite total: 47 pruebas; build correcto. |
-| P03 | Pendiente | — |
+| P03 | Completado | Build y pruebas pasan; sin sesión API 401 y `/finca` redirige; login existente inicia sesión y endpoint protegido responde 200. |
 | P04 | Pendiente | — |
 | P05 | Pendiente | — |
 | P06 | Pendiente | — |
@@ -39,3 +39,11 @@
 - Las pruebas T-01 a T-34 pasan; suite total: 10 archivos y 47 pruebas.
 - `npm run build`: correcto; permanecen dos advertencias preexistentes de trazado dinámico del sistema de archivos.
 - `npx eslint src/lib/config/finca.ts src/lib/reglas tests/reglas vitest.config.ts`: correcto.
+
+### P03 · 2026-11-07 · Completado
+
+- Agregadas conexión Postgres de aplicación, adaptador de sesión para el login existente, middleware `src/proxy.ts`, respuestas de API, esquemas Zod, formato y endpoint de sesión.
+- El login existente y la página raíz conducen ahora a `/finca`; Proxy hace la comprobación optimista de cookie y las rutas verifican la sesión firmada.
+- Pruebas locales sin sesión: `GET /api/finca/sesion` devuelve 401 con `Cache-Control: no-store`; `GET /finca` redirige a `/login`.
+- Prueba local con el login de desarrollo: login 200 y `/api/finca/sesion` 200.
+- `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos.

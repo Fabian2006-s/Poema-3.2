@@ -1,0 +1,13 @@
+import { getAuthenticatedEmail } from '@/lib/auth/session';
+import { ErrorDeNegocio } from '@/lib/reglas/errores';
+
+export async function obtenerSesion(): Promise<{ email: string } | null> {
+  const email = await getAuthenticatedEmail();
+  return email ? { email } : null;
+}
+
+export async function exigirSesion(): Promise<{ email: string }> {
+  const sesion = await obtenerSesion();
+  if (!sesion) throw new ErrorDeNegocio('NO_AUTORIZADO');
+  return sesion;
+}

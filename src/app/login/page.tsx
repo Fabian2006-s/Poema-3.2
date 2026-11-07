@@ -44,7 +44,7 @@ function FormularioLogin() {
       const result = (await response.json()) as { error?: string };
 
       if (response.ok) {
-        router.push('/dashboard');
+        router.push('/finca');
         return;
       }
 
