@@ -2,6 +2,7 @@ export type CodigoError =
   | 'DATOS_INVALIDOS'
   | 'NO_AUTORIZADO'
   | 'DOCUMENTO_DUPLICADO'
+  | 'CORREO_DUPLICADO'
   | 'IMPLEMENTO_DUPLICADO'
   | 'QUIMICO_DUPLICADO'
   | 'TRABAJADOR_NO_ENCONTRADO'
@@ -19,6 +20,7 @@ export const MENSAJES: Record<CodigoError, string> = {
   DATOS_INVALIDOS: 'Revise los datos ingresados.',
   NO_AUTORIZADO: 'Debe iniciar sesión.',
   DOCUMENTO_DUPLICADO: 'Ya existe un trabajador con ese documento.',
+  CORREO_DUPLICADO: 'Ya existe un usuario con ese correo electrónico.',
   IMPLEMENTO_DUPLICADO: 'Ya existe un implemento con ese nombre.',
   QUIMICO_DUPLICADO: 'Ya existe un producto químico con ese nombre.',
   TRABAJADOR_NO_ENCONTRADO: 'El trabajador no existe.',
@@ -37,6 +39,7 @@ export const ESTADO_HTTP: Record<CodigoError, number> = {
   DATOS_INVALIDOS: 400,
   NO_AUTORIZADO: 401,
   DOCUMENTO_DUPLICADO: 409,
+  CORREO_DUPLICADO: 409,
   IMPLEMENTO_DUPLICADO: 409,
   QUIMICO_DUPLICADO: 409,
   TRABAJADOR_NO_ENCONTRADO: 404,

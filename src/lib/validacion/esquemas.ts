@@ -52,6 +52,11 @@ export const esquemaAsignacion = z.object({
   cantidad: z.number().int().min(1),
 });
 
+export const esquemaCrearUsuario = z.object({
+  email: z.string().trim().toLowerCase().pipe(z.email().max(254)),
+  password: z.string().min(8).max(128),
+});
+
 export const esquemaFiltros = z.object({
   estado: z.enum(['activo', 'inactivo']).optional(),
   estadoElemento: z.enum(['disponible', 'agotado', 'vencido', 'inactivo']).optional(),
@@ -71,4 +76,5 @@ export type DatosImplemento = z.infer<typeof esquemaImplemento>;
 export type DatosQuimico = z.infer<typeof esquemaQuimico>;
 export type DatosMovimiento = z.infer<typeof esquemaMovimiento>;
 export type DatosAsignacion = z.infer<typeof esquemaAsignacion>;
+export type DatosCrearUsuario = z.infer<typeof esquemaCrearUsuario>;
 export type FiltrosFinca = z.infer<typeof esquemaFiltros>;

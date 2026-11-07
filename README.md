@@ -5,6 +5,7 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
 ## Funcionalidades
 
 - Panel de inventario y alertas.
+- Creación de usuarios para personas autenticadas.
 - Registro y consulta de trabajadores.
 - Inventario de implementos y productos químicos.
 - Movimientos de entrada y salida para actualizar existencias.
@@ -45,6 +46,10 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
    ```
 
 4. Abre <http://localhost:3000>.
+
+Desde el panel, usa **Crear usuario** para agregar otra cuenta. Solo los usuarios con sesión
+pueden hacerlo; todas las cuentas tienen acceso completo al inventario. Las contraseñas se
+almacenan como hashes, nunca en texto plano.
 
 Los scripts locales de administración de PostgreSQL usan `POEMA32_POSTGRES_URL_NON_POOLING`. La aplicación usa `POEMA32_POSTGRES_PRISMA_URL` cuando corresponde.
 

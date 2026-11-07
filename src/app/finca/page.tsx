@@ -1,5 +1,10 @@
 import Link from 'next/link';
-import { listarAlertas, listarImplementos, listarQuimicos, listarTrabajadores } from '@/lib/dataService';
+import {
+  listarAlertas,
+  listarImplementos,
+  listarQuimicos,
+  listarTrabajadores,
+} from '@/lib/dataService';
 import { PanelAlertas } from '@/components/finca/PanelAlertas';
 import { Tarjeta } from '@/components/ui/Tarjeta';
 
@@ -25,21 +30,33 @@ export default async function PanelFincaPage() {
         <div>
           <p className="text-sm font-semibold text-primario">Resumen de la finca</p>
           <h1 className="mt-1 text-3xl font-bold tracking-tight text-texto">Panel</h1>
-          <p className="mt-2 text-texto-suave">Consulta rápida de personal, existencias y alertas.</p>
+          <p className="mt-2 text-texto-suave">
+            Consulta rápida de personal, existencias y alertas.
+          </p>
         </div>
-        <Link
-          className="inline-flex min-h-11 items-center rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-white hover:bg-primario/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario"
-          href="/finca/movimientos/nuevo"
-        >
-          Registrar movimiento
-        </Link>
+        <div className="flex flex-wrap gap-3">
+          <Link
+            className="inline-flex min-h-11 items-center rounded-lg bg-primario px-4 py-2 text-sm font-semibold text-white hover:bg-primario/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario"
+            href="/finca/movimientos/nuevo"
+          >
+            Registrar movimiento
+          </Link>
+          <Link
+            className="inline-flex min-h-11 items-center rounded-lg border border-borde bg-superficie px-4 py-2 text-sm font-semibold text-texto hover:bg-primario-suave focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primario"
+            href="/finca/usuarios/nuevo"
+          >
+            Crear usuario
+          </Link>
+        </div>
       </header>
 
       <section aria-label="Resumen de registros" className="grid gap-4 sm:grid-cols-3">
         {resumen.map((dato) => (
           <Tarjeta className="border-l-4 border-l-primario" key={dato.etiqueta}>
             <p className="text-sm font-medium text-texto-suave">{dato.etiqueta}</p>
-            <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-texto">{dato.cantidad}</p>
+            <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-texto">
+              {dato.cantidad}
+            </p>
           </Tarjeta>
         ))}
       </section>

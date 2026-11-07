@@ -3,6 +3,7 @@ import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
 import { Redis } from '@upstash/redis';
+import { ErrorDeNegocio } from '@/lib/reglas/errores';
 
 const scrypt = promisify(scryptCallback);
 const usersKey = 'poema:users:v1';
@@ -128,6 +129,39 @@ async function initializeUsers(
 export async function findUserByEmail(email: string): Promise<UserRecord | undefined> {
   const collection = await loadUsers();
   return collection.records.find((user) => user.email === email.toLowerCase());
+}
+
+export async function createUser(
+  email: string,
+  password: string,
+): Promise<Omit<UserRecord, 'passwordHash'>> {
+  const correo = email.trim().toLowerCase();
+  if (!correo || password.length < 8 || password.length > 128) {
+    throw new ErrorDeNegocio('DATOS_INVALIDOS');
+  }
+
+  const collection = await loadUsers();
+  if (collection.records.some((user) => user.email === correo)) {
+    throw new ErrorDeNegocio('CORREO_DUPLICADO');
+  }
+
+  const now = new Date().toISOString();
+  const user: UserRecord = {
+    id: `usr_${randomUUID()}`,
+    email: correo,
+    passwordHash: await hashPassword(password),
+    createdAt: now,
+    updatedAt: now,
+  };
+  collection.records.push(user);
+  await saveUsers(collection);
+
+  return {
+    id: user.id,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
 }
 
 export async function updateUserPassword(email: string, password: string): Promise<boolean> {
