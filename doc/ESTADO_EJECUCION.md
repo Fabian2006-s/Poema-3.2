@@ -9,7 +9,7 @@
 | P04 | Completado | `probar:flujo`: 15 OK, 0 fallas; `db:demo` cargó los registros; build y pruebas pasan. |
 | P05 | Completado | Rutas protegidas verificadas; sin sesión 401; con sesión: creación, duplicado, alerta, decimal químico y rechazos 409; build, 47 pruebas y `db:verificar` correctos. |
 | P06 | Completado | Panel, navegación, componentes UI y gestión de trabajadores; creación, duplicado y desactivación verificados con sesión; vista móvil sin desbordamiento; build y 49 pruebas correctos. |
-| P07 | Pendiente | — |
+| P07 | Completado | Inventario de implementos y químicos implementado; creado implemento y químico de 2,5 litros, duplicados rechazados, alertas/filtros revisados en móvil; build, 49 pruebas y `db:verificar` correctos. |
 | P08 | Pendiente | — |
 | P09 | Pendiente | — |
 
@@ -75,3 +75,13 @@
 - Los datos temporales P06 se eliminaron puntualmente; se conservaron los datos demo. `db:verificar`: 0 fallas.
 - `npm run build`, `npm test` (11 archivos, 49 pruebas) y ESLint enfocado: correctos. El build conserva dos advertencias preexistentes de trazado dinámico.
 - Los pushes continúan bloqueados por GitHub con 403.
+
+### P07 · 2026-11-07 · Completado
+
+- Agregadas tablas adaptables y formularios para implementos enteros y químicos con cantidades decimales, unidad y fecha de vencimiento.
+- Verificado con sesión: implemento entero creado; duplicado mostró `IMPLEMENTO_DUPLICADO`. Químico de 2,5 litros creado y presentado como `2,5 litros`; duplicado mostró `QUIMICO_DUPLICADO`.
+- Se comprobaron los datos demo: implemento con inventario bajo, químico próximo a vencer y químico vencido. El filtro de bajos mostró solo el elemento correspondiente y el filtro de vencimiento mostró los químicos próximos.
+- Vista móvil: tarjetas de inventario y sin desbordamiento horizontal a 375 px.
+- Los registros temporales P07 se eliminaron por prefijo único; los datos demo se conservaron. `db:verificar`: 0 fallas.
+- `npm run build`, `npm test` (11 archivos, 49 pruebas) y ESLint enfocado: correctos. Continúan dos advertencias preexistentes del build.
+- El push sigue rechazado por GitHub con 403.
