@@ -96,4 +96,4 @@
 - `npm test`: 11 archivos, 50 pruebas correctas. `npm run probar:flujo`: 15 casos correctos, 0 fallas. `npm run db:verificar`: 0 fallas; se conservaron 2 trabajadores, 2 implementos, 3 químicos y 2 movimientos demo.
 - `.env.local` está ignorado por Git y el escaneo de archivos versionados no encontró asignaciones con valores de variables de entorno.
 - Actualizados `README.md`, `doc/ACEPTACION.md` y los checkpoints `FASE_5_COMPLETADA.md` y `FASE_6_COMPLETADA.md`. A-01 a A-14 quedan para validación en Vercel; A-15 a A-18 son opcionales de P09.
-- `npm run build`: correcto; permanecen dos advertencias preexistentes de trazado dinámico del sistema de archivos. Se intentará el push después del commit local.
+- `npm run build`: correcto; permanecen dos advertencias preexistentes de trazado dinámico del sistema de archivos. El push del commit P08 fue rechazado por GitHub con HTTP 403 (permiso denegado para `Valerie-Gisell`); el commit queda guardado localmente.
