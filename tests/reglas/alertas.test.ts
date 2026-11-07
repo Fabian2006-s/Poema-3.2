@@ -4,11 +4,16 @@ import {
   hayInventarioBajo,
   nivelVencimiento,
 } from '@/lib/reglas/alertas';
-import { estaVencido } from '@/lib/reglas/fechas';
+import { estaVencido, sumarDias } from '@/lib/reglas/fechas';
 
 const hoy = '2026-06-15';
 
 describe('alertas y estados derivados', () => {
+  it('suma días de calendario sin desbordar meses o años', () => {
+    expect(sumarDias('2026-12-31', 1)).toBe('2027-01-01');
+    expect(sumarDias('2024-02-28', 1)).toBe('2024-02-29');
+  });
+
   it('T-16 no marca bajo un inventario mayor que el mínimo', () => {
     expect(hayInventarioBajo(6, 5)).toBe(false);
   });

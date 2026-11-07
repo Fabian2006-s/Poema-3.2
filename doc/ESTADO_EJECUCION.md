@@ -10,7 +10,7 @@
 | P05 | Completado | Rutas protegidas verificadas; sin sesión 401; con sesión: creación, duplicado, alerta, decimal químico y rechazos 409; build, 47 pruebas y `db:verificar` correctos. |
 | P06 | Completado | Panel, navegación, componentes UI y gestión de trabajadores; creación, duplicado y desactivación verificados con sesión; vista móvil sin desbordamiento; build y 49 pruebas correctos. |
 | P07 | Completado | Inventario de implementos y químicos implementado; creado implemento y químico de 2,5 litros, duplicados rechazados, alertas/filtros revisados en móvil; build, 49 pruebas y `db:verificar` correctos. |
-| P08 | Pendiente | — |
+| P08 | Completado | Formulario de movimientos, `doc/ACEPTACION.md`, README y checkpoints de fases 5–6; build, 50 pruebas y flujo de 15 casos correctos. |
 | P09 | Pendiente | — |
 
 ## Bitácora
@@ -85,3 +85,15 @@
 - Los registros temporales P07 se eliminaron por prefijo único; los datos demo se conservaron. `db:verificar`: 0 fallas.
 - `npm run build`, `npm test` (11 archivos, 49 pruebas) y ESLint enfocado: correctos. Continúan dos advertencias preexistentes del build.
 - El push sigue rechazado por GitHub con 403.
+
+### P08 · 2026-11-07 · Completado
+
+- Agregado `FormularioMovimiento` y `/finca/movimientos/nuevo`: selector de implemento o químico activo, entrada o salida, cantidad, fecha y motivo; validación en vivo y presentación del saldo actualizado, estado y alerta de inventario bajo.
+- Verificado localmente con sesión: validación de cantidad fraccionaria para implementos; salida de 2 unidades dejó 3 y activó el aviso de inventario bajo; salida química de 1,5 litros dejó 1 litro; exceso y salida de químico vencido recibieron los mensajes de rechazo esperados. La fecha se presenta en formato `DD/MM/AAAA`.
+- La vista se comprobó a 375 px sin desbordamiento horizontal. Las tablas de inventario y el panel existentes ya muestran cantidades, unidades, estados y alertas.
+- La auditoría confirmó cantidades químicas decimales con almacenamiento en centésimas, cálculos derivados de estados/alertas, movimientos atómicos, validación de cantidad/motivo/fecha, rutas protegidas y consultas parametrizadas.
+- Se centralizaron `hoyBogota` y `sumarDias` en `src/lib/reglas/fechas.ts`. Se agregó la limpieza `--prueba` y se cambió `probar:flujo` para conservar los registros demo.
+- `npm test`: 11 archivos, 50 pruebas correctas. `npm run probar:flujo`: 15 casos correctos, 0 fallas. `npm run db:verificar`: 0 fallas; se conservaron 2 trabajadores, 2 implementos, 3 químicos y 2 movimientos demo.
+- `.env.local` está ignorado por Git y el escaneo de archivos versionados no encontró asignaciones con valores de variables de entorno.
+- Actualizados `README.md`, `doc/ACEPTACION.md` y los checkpoints `FASE_5_COMPLETADA.md` y `FASE_6_COMPLETADA.md`. A-01 a A-14 quedan para validación en Vercel; A-15 a A-18 son opcionales de P09.
+- `npm run build`: correcto; permanecen dos advertencias preexistentes de trazado dinámico del sistema de archivos. Se intentará el push después del commit local.

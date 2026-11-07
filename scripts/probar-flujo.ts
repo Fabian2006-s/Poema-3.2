@@ -1,5 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { loadEnvConfig } from '@next/env';
+import { hoyBogota, sumarDias } from '@/lib/reglas/fechas';
 
 loadEnvConfig(process.cwd());
 
@@ -10,23 +11,6 @@ type CodigoEsperado =
   | 'QUIMICO_VENCIDO';
 
 let fallas = 0;
-
-function desplazarFecha(fecha: string, dias: number): string {
-  const [anio, mes, dia] = fecha.split('-').map(Number);
-  const resultado = new Date(Date.UTC(anio ?? 0, (mes ?? 1) - 1, (dia ?? 1) + dias));
-  return resultado.toISOString().slice(0, 10);
-}
-
-function hoyBogota(): string {
-  const partes = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Bogota',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(new Date());
-  const valores = Object.fromEntries(partes.map(({ type, value }) => [type, value]));
-  return `${valores.year}-${valores.month}-${valores.day}`;
-}
 
 async function caso(etiqueta: string, operacion: () => Promise<boolean | void>): Promise<void> {
   try {
@@ -73,7 +57,7 @@ async function main(): Promise<void> {
   let porVencerId = '';
 
   try {
-    execFileSync(process.execPath, ['scripts/limpiar-prueba.mjs'], { stdio: 'inherit' });
+    execFileSync(process.execPath, ['scripts/limpiar-prueba.mjs', '--prueba'], { stdio: 'inherit' });
     const hoy = hoyBogota();
 
     await caso('1) crear trabajador activo', async () => {
@@ -110,7 +94,7 @@ async function main(): Promise<void> {
         disponible: 2.5,
         minima: 1,
         unidad: 'litros',
-        fechaVencimiento: desplazarFecha(hoy, 40),
+        fechaVencimiento: sumarDias(hoy, 40),
       });
       quimicoId = resultado.id;
       return Boolean(quimicoId);
@@ -223,7 +207,7 @@ async function main(): Promise<void> {
         disponible: 1,
         minima: 0,
         unidad: 'litros',
-        fechaVencimiento: desplazarFecha(hoy, -1),
+        fechaVencimiento: sumarDias(hoy, -1),
       });
       vencidoId = resultado.id;
       return Boolean(vencidoId);
@@ -249,7 +233,7 @@ async function main(): Promise<void> {
         disponible: 1,
         minima: 0,
         unidad: 'litros',
-        fechaVencimiento: desplazarFecha(hoy, 30),
+        fechaVencimiento: sumarDias(hoy, 30),
       });
       porVencerId = resultado.id;
       return Boolean(porVencerId);
@@ -268,7 +252,7 @@ async function main(): Promise<void> {
     console.error('No se pudo preparar o ejecutar la prueba de flujo:', error);
   } finally {
     try {
-      execFileSync(process.execPath, ['scripts/limpiar-prueba.mjs'], { stdio: 'inherit' });
+      execFileSync(process.execPath, ['scripts/limpiar-prueba.mjs', '--prueba'], { stdio: 'inherit' });
     } catch (error) {
       fallas += 1;
       console.error('No se pudieron limpiar los datos de prueba:', error);

@@ -11,6 +11,13 @@ export function hoyBogota(reloj: Date = new Date()): string {
   return `${valores.year}-${valores.month}-${valores.day}`;
 }
 
+export function sumarDias(fecha: string, dias: number): string {
+  const anio = Number(fecha.slice(0, 4));
+  const mes = Number(fecha.slice(5, 7));
+  const dia = Number(fecha.slice(8, 10));
+  return new Date(Date.UTC(anio, mes - 1, dia + dias)).toISOString().slice(0, 10);
+}
+
 export function esFechaValida(fecha: string): boolean {
   const coincidencia = /^(\d{4})-(\d{2})-(\d{2})$/.exec(fecha);
   if (!coincidencia) return false;

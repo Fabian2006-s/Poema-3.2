@@ -1,40 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finca Bananera
 
-## Getting Started
+Aplicación web para administrar trabajadores e inventario de una finca bananera. Está construida con Next.js, TypeScript y PostgreSQL (Supabase).
 
-First, run the development server:
+## Funcionalidades
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+- Panel de inventario y alertas.
+- Registro y consulta de trabajadores.
+- Inventario de implementos y productos químicos.
+- Movimientos de entrada y salida para actualizar existencias.
+- Validación de cantidades, fechas, stock insuficiente y productos vencidos.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Requisitos
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Node.js 20.9 o posterior y npm.
+- Una base de datos PostgreSQL accesible desde la aplicación.
+- Variables de entorno configuradas en `.env.local` para desarrollo local.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Desarrollo local
 
-## Learn More
+1. Instala las dependencias:
 
-To learn more about Next.js, take a look at the following resources:
+   ```bash
+   npm install
+   ```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+2. Crea `.env.local` en la raíz y configura los nombres de variables que necesite tu entorno:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+   - `POEMA32_POSTGRES_PRISMA_URL`
+   - `POEMA32_POSTGRES_URL_NON_POOLING`
+   - `AUTH_SECRET`
+   - `DEMO_USER_EMAIL`
+   - `DEMO_USER_PASSWORD`
+   - `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (persistencia de usuarios en despliegues)
+   - `RESEND_API_KEY` y `RESEND_FROM` (envío de correos, si se habilita)
 
-## Deploy on Vercel
+   No guardes valores de entorno en Git ni compartas credenciales.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. Aplica las migraciones, carga los datos de demostración e inicia la aplicación:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   npm run db:migrar
+   npm run db:demo
+   npm run dev
+   ```
 
-### Authentication storage
+4. Abre <http://localhost:3000>.
 
-Vercel deployments use Upstash Redis for persistent user records. Add a Redis store to the Vercel project and configure `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN`. Also set `AUTH_SECRET` to a long random secret, plus `DEMO_USER_EMAIL` and `DEMO_USER_PASSWORD` for the first account created in the store. Redeploy after adding these variables. Password changes are then saved to Redis and remain available across deployments and serverless instances.
+Los scripts locales de administración de PostgreSQL usan `POEMA32_POSTGRES_URL_NON_POOLING`. La aplicación usa `POEMA32_POSTGRES_PRISMA_URL` cuando corresponde.
+
+## Scripts disponibles
+
+| Comando | Descripción |
+|---|---|
+| `npm run dev` | Inicia el servidor de desarrollo. |
+| `npm run build` | Compila la aplicación para producción. |
+| `npm start` | Inicia el servidor de producción compilado. |
+| `npm run lint` | Ejecuta ESLint. |
+| `npm test` | Ejecuta las pruebas automatizadas. |
+| `npm run db:migrar` | Aplica las migraciones de PostgreSQL. |
+| `npm run db:verificar` | Verifica tablas, vistas e integridad de la base. |
+| `npm run db:demo` | Recarga los registros de demostración. |
+| `npm run db:limpiar -- --prueba` | Elimina registros `Prueba %` y conserva los datos `Demo %`. |
+| `npm run probar:flujo` | Ejecuta las pruebas del flujo de finca y limpia solo sus registros de prueba. |
+
+## Inventario y fechas
+
+Las cantidades de químicos se ingresan y presentan en decimales; se almacenan en centésimas para evitar errores de precisión. Las alertas de inventario bajo, próximo a vencer y vencido se calculan a partir de las existencias, cantidades mínimas, vencimientos y fecha actual; no se guardan como estados independientes.
+
+Consulta el [plan funcional y técnico](./doc/PLAN_FINCA.md) para las reglas y criterios de aceptación.

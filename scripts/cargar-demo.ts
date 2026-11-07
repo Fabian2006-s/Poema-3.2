@@ -1,24 +1,8 @@
 import { execFileSync } from 'node:child_process';
 import { loadEnvConfig } from '@next/env';
+import { hoyBogota, sumarDias } from '@/lib/reglas/fechas';
 
 loadEnvConfig(process.cwd());
-
-function desplazarFecha(fecha: string, dias: number): string {
-  const [anio, mes, dia] = fecha.split('-').map(Number);
-  const resultado = new Date(Date.UTC(anio ?? 0, (mes ?? 1) - 1, (dia ?? 1) + dias));
-  return resultado.toISOString().slice(0, 10);
-}
-
-function hoyBogota(): string {
-  const partes = new Intl.DateTimeFormat('en-CA', {
-    timeZone: 'America/Bogota',
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  }).formatToParts(new Date());
-  const valores = Object.fromEntries(partes.map(({ type, value }) => [type, value]));
-  return `${valores.year}-${valores.month}-${valores.day}`;
-}
 
 async function main(): Promise<void> {
   const { cerrarPool, crearImplemento, crearQuimico, crearTrabajador, registrarMovimiento } =
@@ -60,7 +44,7 @@ async function main(): Promise<void> {
       disponible: 8.5,
       minima: 1,
       unidad: 'litros',
-      fechaVencimiento: desplazarFecha(hoy, 40),
+      fechaVencimiento: sumarDias(hoy, 40),
     });
     await crearQuimico({
       nombre: 'Demo Próximo',
@@ -68,7 +52,7 @@ async function main(): Promise<void> {
       disponible: 2,
       minima: 0.5,
       unidad: 'litros',
-      fechaVencimiento: desplazarFecha(hoy, 20),
+      fechaVencimiento: sumarDias(hoy, 20),
     });
     await crearQuimico({
       nombre: 'Demo Vencido',
@@ -76,7 +60,7 @@ async function main(): Promise<void> {
       disponible: 1,
       minima: 0,
       unidad: 'litros',
-      fechaVencimiento: desplazarFecha(hoy, -1),
+      fechaVencimiento: sumarDias(hoy, -1),
     });
 
     await registrarMovimiento({
