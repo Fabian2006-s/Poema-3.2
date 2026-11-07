@@ -5,7 +5,7 @@ import { hayInventarioBajo, estadoElemento } from '@/lib/reglas/alertas';
 import { ErrorDeNegocio } from '@/lib/reglas/errores';
 import { hoyBogota } from '@/lib/reglas/fechas';
 import { esquemaImplemento } from '@/lib/validacion/esquemas';
-import type { Implemento } from './tipos';
+import type { Implemento, OpcionalesConUndefined } from './tipos';
 
 type ImplementoFila = QueryResultRow & {
   id: string;
@@ -34,10 +34,10 @@ function mapearImplemento(fila: ImplementoFila, hoy: string): Implemento {
   };
 }
 
-export async function listarImplementos(filtros: {
+export async function listarImplementos(filtros: OpcionalesConUndefined<{
   soloBajos?: boolean;
   incluirInactivos?: boolean;
-} = {}): Promise<Implemento[]> {
+}> = {}): Promise<Implemento[]> {
   const condiciones: string[] = [];
   const valores: unknown[] = [];
   if (!filtros.incluirInactivos) condiciones.push('inactivo = false');
@@ -80,9 +80,13 @@ export async function crearImplemento(
 
 export async function actualizarImplemento(
   id: string,
-  cambios: Partial<{ nombre: string; categoria: string; disponible: number; minima: number }> & {
-    inactivo?: boolean;
-  },
+  cambios: OpcionalesConUndefined<{
+    nombre: string;
+    categoria: string;
+    disponible: number;
+    minima: number;
+    inactivo: boolean;
+  }>,
 ): Promise<void> {
   if (cambios.disponible !== undefined && cambios.disponible > CANTIDAD_MAXIMA) {
     throw new ErrorDeNegocio('DATOS_INVALIDOS');

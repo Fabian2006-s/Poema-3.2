@@ -2,6 +2,10 @@ import type { EstadoElemento, NivelVencimiento } from '@/lib/reglas/alertas';
 import type { EstadoTrabajador } from '@/lib/reglas/trabajador';
 import type { TipoElemento, TipoMovimiento } from '@/lib/reglas/inventario';
 
+export type OpcionalesConUndefined<T> = {
+  [K in keyof T]?: T[K] | undefined;
+};
+
 export type Trabajador = {
   id: string;
   nombre: string;

@@ -7,7 +7,7 @@
 | P02 | Completado | 34 pruebas de reglas; suite total: 47 pruebas; build correcto. |
 | P03 | Completado | Build y pruebas pasan; sin sesión API 401 y `/finca` redirige; login existente inicia sesión y endpoint protegido responde 200. |
 | P04 | Completado | `probar:flujo`: 15 OK, 0 fallas; `db:demo` cargó los registros; build y pruebas pasan. |
-| P05 | Pendiente | — |
+| P05 | Completado | Rutas protegidas verificadas; sin sesión 401; con sesión: creación, duplicado, alerta, decimal químico y rechazos 409; build, 47 pruebas y `db:verificar` correctos. |
 | P06 | Pendiente | — |
 | P07 | Pendiente | — |
 | P08 | Pendiente | — |
@@ -55,3 +55,12 @@
 - `npm run probar:flujo`: 15 pasos OK, 0 fallas; incluye alerta en igualdad, resta decimal exacta, excedentes y rechazo de químico vencido. Los datos de prueba se limpiaron al inicio y al final.
 - `npm run db:demo`: completado; dejó registros demostrativos para las siguientes fases.
 - `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos.
+
+### P05 · 2026-11-07 · Completado
+
+- Agregadas rutas protegidas para trabajadores, implementos, químicos, movimientos y alertas; las rutas dinámicas permiten actualizar trabajadores, implementos y químicos.
+- Sin sesión: `GET /api/finca/implementos` y `POST /api/finca/movimientos` respondieron 401.
+- Con sesión local: creación de trabajador, implemento y químico; documento duplicado rechazado con 409; salida de implemento activó alerta; salida química decimal de 1,5 litros dejó saldo 3,5; excedente y químico vencido rechazados con 409.
+- Los registros temporales de API se limpiaron por identificadores/nombres únicos; se conservaron los datos demo. `db:verificar`: 0 fallas.
+- `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos. El build mantiene dos advertencias preexistentes de trazado dinámico del sistema de archivos.
+- Los pushes anteriores siguen rechazados por GitHub con 403; los commits se conservan localmente.

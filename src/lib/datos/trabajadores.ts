@@ -3,7 +3,7 @@ import { consultar } from '@/lib/db/conexion';
 import { ErrorDeNegocio } from '@/lib/reglas/errores';
 import { validarTrabajador, type EstadoTrabajador } from '@/lib/reglas/trabajador';
 import type { DatosTrabajador } from '@/lib/validacion/esquemas';
-import type { Trabajador } from './tipos';
+import type { OpcionalesConUndefined, Trabajador } from './tipos';
 
 type TrabajadorFila = QueryResultRow & Trabajador;
 
@@ -16,10 +16,10 @@ function esUnicoDuplicado(error: unknown): boolean {
   );
 }
 
-export async function listarTrabajadores(filtros: {
+export async function listarTrabajadores(filtros: OpcionalesConUndefined<{
   estado?: EstadoTrabajador;
   incluirInactivos?: boolean;
-} = {}): Promise<Trabajador[]> {
+}> = {}): Promise<Trabajador[]> {
   const condiciones: string[] = [];
   const valores: unknown[] = [];
   if (filtros.estado) {
@@ -66,7 +66,9 @@ export async function crearTrabajador(datos: DatosTrabajador): Promise<{ id: str
 
 export async function actualizarTrabajador(
   id: string,
-  cambios: Partial<DatosTrabajador> & { estado?: EstadoTrabajador },
+  cambios: OpcionalesConUndefined<DatosTrabajador> & {
+    estado?: EstadoTrabajador | undefined;
+  },
 ): Promise<void> {
   if (cambios.nombre !== undefined || cambios.documento !== undefined || cambios.cargo !== undefined) {
     validarTrabajador({

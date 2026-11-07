@@ -82,6 +82,13 @@ export async function leerCuerpo<T>(request: Request, esquema: ZodType<T>): Prom
   return esquema.parse(cuerpo);
 }
 
+export function leerParametros<T>(request: Request, esquema: ZodType<T>): T {
+  const parametros = Object.fromEntries(
+    [...new URL(request.url).searchParams.entries()].filter(([, valor]) => valor !== ''),
+  );
+  return esquema.parse(parametros);
+}
+
 function esErrorPostgres(error: unknown): error is { code: string; constraint?: string } {
   return (
     typeof error === 'object' &&

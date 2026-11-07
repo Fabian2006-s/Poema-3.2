@@ -6,7 +6,7 @@ import { aCentesimas, deCentesimas } from '@/lib/reglas/cantidades';
 import { ErrorDeNegocio } from '@/lib/reglas/errores';
 import { hoyBogota } from '@/lib/reglas/fechas';
 import { esquemaQuimico } from '@/lib/validacion/esquemas';
-import type { Quimico } from './tipos';
+import type { OpcionalesConUndefined, Quimico } from './tipos';
 
 type QuimicoFila = QueryResultRow & {
   id: string;
@@ -44,11 +44,11 @@ function mapearQuimico(fila: QuimicoFila, hoy: string): Quimico {
   };
 }
 
-export async function listarQuimicos(filtros: {
+export async function listarQuimicos(filtros: OpcionalesConUndefined<{
   soloBajos?: boolean;
   soloPorVencer?: boolean;
   incluirInactivos?: boolean;
-} = {}): Promise<Quimico[]> {
+}> = {}): Promise<Quimico[]> {
   const condiciones: string[] = [];
   if (!filtros.incluirInactivos) condiciones.push('inactivo = false');
   const where = condiciones.length ? `WHERE ${condiciones.join(' AND ')}` : '';
@@ -107,14 +107,15 @@ export async function crearQuimico(
 
 export async function actualizarQuimico(
   id: string,
-  cambios: Partial<{
+  cambios: OpcionalesConUndefined<{
     nombre: string;
     categoria: string;
     disponible: number;
     minima: number;
     unidad: string;
     fechaVencimiento: string;
-  }> & { inactivo?: boolean },
+    inactivo: boolean;
+  }>,
 ): Promise<void> {
   for (const cantidad of [cambios.disponible, cambios.minima]) {
     if (

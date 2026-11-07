@@ -11,7 +11,14 @@ import {
   validarMotivoYFecha,
   type TipoElemento,
 } from '@/lib/reglas/inventario';
-import type { DatosMovimiento, Implemento, Movimiento, Quimico, ResultadoMovimiento } from './tipos';
+import type {
+  DatosMovimiento,
+  Implemento,
+  Movimiento,
+  OpcionalesConUndefined,
+  Quimico,
+  ResultadoMovimiento,
+} from './tipos';
 
 type ElementoFila = QueryResultRow & {
   id: string;
@@ -119,12 +126,12 @@ export async function registrarMovimiento(datos: DatosMovimiento): Promise<Resul
   });
 }
 
-export async function listarMovimientos(filtros: {
+export async function listarMovimientos(filtros: OpcionalesConUndefined<{
   tipoElemento?: TipoElemento;
   elementoId?: string;
   desde?: string;
   hasta?: string;
-} = {}): Promise<Movimiento[]> {
+}> = {}): Promise<Movimiento[]> {
   const condiciones: string[] = [];
   const valores: unknown[] = [];
   const filtrosSql = [
