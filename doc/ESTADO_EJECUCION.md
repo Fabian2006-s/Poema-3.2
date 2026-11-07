@@ -6,7 +6,7 @@
 | P01 | Completado | M1/M2 aplicadas; `db:verificar`: 0 fallas; build correcto. |
 | P02 | Completado | 34 pruebas de reglas; suite total: 47 pruebas; build correcto. |
 | P03 | Completado | Build y pruebas pasan; sin sesión API 401 y `/finca` redirige; login existente inicia sesión y endpoint protegido responde 200. |
-| P04 | Pendiente | — |
+| P04 | Completado | `probar:flujo`: 15 OK, 0 fallas; `db:demo` cargó los registros; build y pruebas pasan. |
 | P05 | Pendiente | — |
 | P06 | Pendiente | — |
 | P07 | Pendiente | — |
@@ -46,4 +46,12 @@
 - El login existente y la página raíz conducen ahora a `/finca`; Proxy hace la comprobación optimista de cookie y las rutas verifican la sesión firmada.
 - Pruebas locales sin sesión: `GET /api/finca/sesion` devuelve 401 con `Cache-Control: no-store`; `GET /finca` redirige a `/login`.
 - Prueba local con el login de desarrollo: login 200 y `/api/finca/sesion` 200.
+- `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos.
+
+### P04 · 2026-11-07 · Completado (fase 4 sigue abierta hasta P05)
+
+- Agregadas consultas y casos de uso para trabajadores, implementos, químicos, movimientos y alertas; `dataService` conserva la persistencia previa de recuperación de contraseñas y añade la fachada de finca.
+- La app usa el pooler en producción; en local usa la URL directa si está configurada. La selección de conexión es diferida hasta la primera consulta.
+- `npm run probar:flujo`: 15 pasos OK, 0 fallas; incluye alerta en igualdad, resta decimal exacta, excedentes y rechazo de químico vencido. Los datos de prueba se limpiaron al inicio y al final.
+- `npm run db:demo`: completado; dejó registros demostrativos para las siguientes fases.
 - `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos.

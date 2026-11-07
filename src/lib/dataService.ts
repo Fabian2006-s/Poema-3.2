@@ -218,3 +218,20 @@ export async function liberarReservaToken(id: string): Promise<void> {
 export async function cambiarContrasenaUsuario(usuarioId: string, password: string): Promise<boolean> {
   return updateUserPasswordById(usuarioId, password);
 }
+
+export { listarAlertas } from '@/lib/datos/alertas';
+export { crearImplemento, actualizarImplemento, listarImplementos } from '@/lib/datos/implementos';
+export { listarMovimientos, registrarMovimiento } from '@/lib/datos/movimientos';
+export { crearQuimico, actualizarQuimico, listarQuimicos } from '@/lib/datos/quimicos';
+export { crearTrabajador, actualizarTrabajador, listarTrabajadores } from '@/lib/datos/trabajadores';
+export { cerrarPool } from '@/lib/datos/conexion';
+export type {
+  Asignacion,
+  DatosMovimiento,
+  ElementoAlerta,
+  Implemento,
+  Movimiento,
+  Quimico,
+  ResultadoMovimiento,
+  Trabajador,
+} from '@/lib/datos/tipos';
