@@ -5,8 +5,8 @@ import './globals.css';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 
 export const metadata: Metadata = {
-  title: process.env.NEXT_PUBLIC_APP_NAME ?? 'Sistema TS',
-  description: 'Sistema fullstack TypeScript con JSON Database Layer',
+  title: process.env.NEXT_PUBLIC_APP_NAME ?? 'Finca Bananera',
+  description: 'Gestión de trabajadores, inventario y movimientos de la finca.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

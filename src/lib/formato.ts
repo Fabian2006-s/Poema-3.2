@@ -1,10 +1,8 @@
-import { deCentesimas } from '@/lib/reglas/cantidades';
-
-export function formatearCantidadQuimico(centesimas: number, unidad: string): string {
-  const cantidad = new Intl.NumberFormat('es-CO', {
+export function formatearCantidadQuimico(cantidad: number, unidad: string): string {
+  const formateado = new Intl.NumberFormat('es-CO', {
     maximumFractionDigits: 2,
-  }).format(deCentesimas(centesimas));
-  return `${cantidad} ${unidad}`;
+  }).format(cantidad);
+  return `${formateado} ${unidad}`;
 }
 
 export function formatearFecha(fecha: string): string {

@@ -8,7 +8,7 @@
 | P03 | Completado | Build y pruebas pasan; sin sesión API 401 y `/finca` redirige; login existente inicia sesión y endpoint protegido responde 200. |
 | P04 | Completado | `probar:flujo`: 15 OK, 0 fallas; `db:demo` cargó los registros; build y pruebas pasan. |
 | P05 | Completado | Rutas protegidas verificadas; sin sesión 401; con sesión: creación, duplicado, alerta, decimal químico y rechazos 409; build, 47 pruebas y `db:verificar` correctos. |
-| P06 | Pendiente | — |
+| P06 | Completado | Panel, navegación, componentes UI y gestión de trabajadores; creación, duplicado y desactivación verificados con sesión; vista móvil sin desbordamiento; build y 49 pruebas correctos. |
 | P07 | Pendiente | — |
 | P08 | Pendiente | — |
 | P09 | Pendiente | — |
@@ -64,3 +64,14 @@
 - Los registros temporales de API se limpiaron por identificadores/nombres únicos; se conservaron los datos demo. `db:verificar`: 0 fallas.
 - `npm run build`, `npm test` (47 pruebas) y ESLint enfocado: correctos. El build mantiene dos advertencias preexistentes de trazado dinámico del sistema de archivos.
 - Los pushes anteriores siguen rechazados por GitHub con 403; los commits se conservan localmente.
+
+### P06 · 2026-11-07 · Completado
+
+- Agregados tokens de Tailwind 4 y componentes reutilizables para botones, campos, selectores, tarjetas, insignias, avisos, modal y estado vacío.
+- Agregados layout protegido de `/finca`, navegación con menú adaptable, panel con conteos y alertas, y páginas de consulta/creación de trabajadores.
+- Verificado localmente con sesión: panel mostró 2 trabajadores, 2 implementos y 3 químicos; se creó un trabajador, el documento duplicado mostró el error esperado y se desactivó el trabajador de prueba.
+- Revisión móvil: tarjetas bajo 640 px; el menú móvil evita desbordamiento a 375 y 640 px. Se ajustó el punto de quiebre del menú para evitar desbordamiento en tablet.
+- Se corrigió el formato de cantidades químicas para recibir los decimales que devuelve la capa de datos; pruebas de formato incluidas.
+- Los datos temporales P06 se eliminaron puntualmente; se conservaron los datos demo. `db:verificar`: 0 fallas.
+- `npm run build`, `npm test` (11 archivos, 49 pruebas) y ESLint enfocado: correctos. El build conserva dos advertencias preexistentes de trazado dinámico.
+- Los pushes continúan bloqueados por GitHub con 403.
