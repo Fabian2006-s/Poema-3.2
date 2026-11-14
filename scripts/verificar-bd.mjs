@@ -1,15 +1,27 @@
 import { crearPool } from './conexion-bd.mjs';
 
-const tablas = ['trabajadores', 'implementos', 'quimicos', 'movimientos', 'asignaciones'];
+const tablas = [
+  'trabajadores',
+  'implementos',
+  'quimicos',
+  'movimientos',
+  'asignaciones',
+  'usuarios_login',
+  'tokens_recuperacion',
+  'solicitudes_recuperacion',
+];
 const vistas = ['v_implementos', 'v_quimicos'];
 const estructuras = [
   ['ux_trab_documento', 'índice'],
   ['ux_impl_nombre', 'índice'],
   ['ux_quim_nombre', 'índice'],
+  ['ux_usuarios_login_email', 'índice'],
+  ['ux_tokens_recuperacion_hash', 'índice'],
   ['impl_disp_no_neg', 'restricción'],
   ['quim_disp_no_neg', 'restricción'],
   ['mov_cantidad_positiva', 'restricción'],
   ['mov_motivo_minimo', 'restricción'],
+  ['usr_login_email_minimo', 'restricción'],
 ];
 let fallas = 0;
 const pool = crearPool();

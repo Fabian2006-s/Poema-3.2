@@ -10,14 +10,19 @@ const globalConPool = globalThis as GlobalConPool;
 let poolLocal: Pool | undefined;
 
 function obtenerUrlConexion(): string {
-  const usarPooler = process.env.NODE_ENV === 'production';
+  const urlPooler =
+    process.env.POEMA32_POSTGRES_PRISMA_URL ?? process.env.POSTGRES_PRISMA_URL;
+  const urlDirecta =
+    process.env.POEMA32_POSTGRES_URL_NON_POOLING ?? process.env.POSTGRES_URL_NON_POOLING;
+  const usarPooler = process.env.NODE_ENV === 'production' || !urlDirecta;
   const nombreVariable = usarPooler
-    ? 'POEMA32_POSTGRES_PRISMA_URL'
-    : 'POEMA32_POSTGRES_URL_NON_POOLING';
-  const connectionString = usarPooler
     ? process.env.POEMA32_POSTGRES_PRISMA_URL
-    : (process.env.POEMA32_POSTGRES_URL_NON_POOLING ??
-      process.env.POEMA32_POSTGRES_PRISMA_URL);
+      ? 'POEMA32_POSTGRES_PRISMA_URL'
+      : 'POSTGRES_PRISMA_URL'
+    : process.env.POEMA32_POSTGRES_URL_NON_POOLING
+      ? 'POEMA32_POSTGRES_URL_NON_POOLING'
+      : 'POSTGRES_URL_NON_POOLING';
+  const connectionString = usarPooler ? urlPooler : urlDirecta;
   if (!connectionString) {
     throw new Error(`Falta ${nombreVariable} para conectar con Postgres.`);
   }
@@ -28,7 +33,7 @@ function obtenerUrlConexion(): string {
   } catch {
     throw new Error(`${nombreVariable} no es una URL válida.`);
   }
-  const puertoEsperado = usarPooler || !process.env.POEMA32_POSTGRES_URL_NON_POOLING ? '6543' : '5432';
+  const puertoEsperado = usarPooler ? '6543' : '5432';
   if (url.port !== puertoEsperado) {
     throw new Error(
       `${nombreVariable} debe usar ${puertoEsperado === '6543' ? 'el pooler (6543)' : 'la conexión directa (5432)'}.`,

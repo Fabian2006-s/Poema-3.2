@@ -54,25 +54,24 @@ La aplicación usa `src/`. No existen `src/app/finca/`, `src/app/api/finca/`, `s
 
 ## 5. Autenticación
 
-Hay login en `/login` (`src/app/login/page.tsx`) y `POST /api/auth/login`. Las credenciales se verifican con hashes scrypt en `src/lib/auth/users.ts`; los usuarios se guardan en Upstash Redis si está configurado, o en `data/users.json` en desarrollo. La sesión usa una cookie firmada `poema_session`; `getAuthenticatedEmail()` en `src/lib/auth/session.ts` obtiene el correo de la sesión. Al iniciar sesión, la interfaz redirige a `/dashboard`. También existen logout y recuperación de contraseña. No hay protección ni rutas `/finca`; P03 debe envolver la sesión existente y proteger las rutas nuevas sin reemplazar el login.
+Hay login en `/login` (`src/app/login/page.tsx`) y `POST /api/auth/login`. Las credenciales se verifican con hashes scrypt en `src/lib/auth/users.ts`; en producción los usuarios se guardan en `usuarios_login` de Postgres y, en desarrollo local, en `data/users.json`. La sesión usa una cookie firmada `poema_session`; `getAuthenticatedEmail()` en `src/lib/auth/session.ts` obtiene el correo de la sesión. Al iniciar sesión, la interfaz entra a `/finca`. También existen logout y recuperación de contraseña; en producción los tokens y límites de recuperación se guardan en Postgres.
 
 ## 6. Base de datos y variables
 
 `.env.local` contiene nombres de variables de conexión de Postgres pooler y variables de Supabase. Se verificaron los puertos sin mostrar ni guardar sus valores:
 
-- `POEMA32_POSTGRES_PRISMA_URL`: pooler, puerto 6543.
-- `POEMA32_POSTGRES_URL`: pooler, puerto 6543.
-- `POEMA32_POSTGRES_URL_NON_POOLING`: conexión directa, puerto 5432.
+- `POEMA32_POSTGRES_PRISMA_URL` o `POSTGRES_PRISMA_URL`: pooler, puerto 6543.
+- `POEMA32_POSTGRES_URL_NON_POOLING` o `POSTGRES_URL_NON_POOLING`: conexión directa, puerto 5432.
 
-La aplicación en serverless usará `POEMA32_POSTGRES_PRISMA_URL` (pooler). Los scripts locales de migración/verificación usan `POEMA32_POSTGRES_URL_NON_POOLING` (5432), porque en este entorno los URLs pooler agotaron el tiempo mientras el endpoint directo conectó correctamente. Las URLs contienen `sslmode=require`; se quita ese parámetro antes de crear el pool para que `pg` respete la configuración TLS explícita. M1 y M2 se aplicaron y verificaron correctamente en P01.
+La aplicación en serverless usa la variable de pooler disponible; los scripts locales de migración/verificación prefieren la variable directa (5432). Las URLs contienen `sslmode=require`; se quita ese parámetro antes de crear el pool para que `pg` respete la configuración TLS explícita. M1, M2 y M3 están aplicadas.
 
 ## 7. Datos existentes
 
-Hay almacenamiento para las cuentas del login (Redis o archivo local) y para recuperación de contraseña. No hay datos de finca ni persistencia de trabajadores, implementos, químicos o movimientos.
+Las cuentas del login y los restablecimientos usan Postgres en producción, y archivos locales durante el desarrollo. Los datos de finca también persisten en Postgres.
 
 ## 8. Migraciones
 
-P01 creó `supabase/migrations/001_finca_base.sql`, `002_finca_vistas_seguridad.sql`, `scripts/migrar.mjs` y `scripts/verificar-bd.mjs`. Ambas migraciones fueron aplicadas; las tablas, vistas, restricciones, RLS y pruebas de integridad se verificaron sin fallas.
+P01 creó `supabase/migrations/001_finca_base.sql`, `002_finca_vistas_seguridad.sql`, `scripts/migrar.mjs` y `scripts/verificar-bd.mjs`. M3 (`003_autenticacion_postgres.sql`) agrega usuarios y recuperación de contraseña; las tres migraciones están aplicadas.
 
 ## 9. Dominio de la finca
 

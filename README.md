@@ -29,10 +29,9 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
 
    - `POEMA32_POSTGRES_PRISMA_URL`
    - `POEMA32_POSTGRES_URL_NON_POOLING`
+   - `POSTGRES_PRISMA_URL` y `POSTGRES_URL_NON_POOLING` (nombres de la integración de Supabase en Vercel)
    - `AUTH_SECRET`
-   - `DEMO_USER_EMAIL`
-   - `DEMO_USER_PASSWORD`
-   - `UPSTASH_REDIS_REST_URL` y `UPSTASH_REDIS_REST_TOKEN` (persistencia de usuarios en despliegues)
+   - `DEMO_USER_EMAIL` y `DEMO_USER_PASSWORD` (solo para crear la cuenta inicial si la tabla de usuarios está vacía)
    - `RESEND_API_KEY` y `RESEND_FROM` (envío de correos, si se habilita)
 
    No guardes valores de entorno en Git ni compartas credenciales.
@@ -50,9 +49,13 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
 En desarrollo local, el inicio de sesión ofrece **Crear una cuenta** y registra la cuenta con
 sesión iniciada. El registro público está deshabilitado en producción porque cada cuenta tiene
 acceso completo al inventario; allí, las personas autorizadas pueden usar **Crear usuario** desde
-el panel. Las contraseñas se almacenan como hashes, nunca en texto plano.
+el panel. En producción, usuarios y restablecimientos se guardan en Postgres; en desarrollo local,
+las cuentas y solicitudes de recuperación usan archivos locales. Las contraseñas se almacenan como
+hashes, nunca en texto plano.
 
-Los scripts locales de administración de PostgreSQL usan `POEMA32_POSTGRES_URL_NON_POOLING`. La aplicación usa `POEMA32_POSTGRES_PRISMA_URL` cuando corresponde.
+Los scripts locales de administración de PostgreSQL usan `POEMA32_POSTGRES_URL_NON_POOLING` o
+`POSTGRES_URL_NON_POOLING`. La aplicación usa `POEMA32_POSTGRES_PRISMA_URL` o
+`POSTGRES_PRISMA_URL` para el pooler en producción.
 
 ## Scripts disponibles
 

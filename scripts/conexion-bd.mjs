@@ -8,10 +8,13 @@ cargarVariables(process.cwd());
 
 export function crearPool() {
   const connectionString =
-    process.env.POEMA32_POSTGRES_URL_NON_POOLING ?? process.env.POEMA32_POSTGRES_PRISMA_URL;
+    process.env.POEMA32_POSTGRES_URL_NON_POOLING ??
+    process.env.POSTGRES_URL_NON_POOLING ??
+    process.env.POEMA32_POSTGRES_PRISMA_URL ??
+    process.env.POSTGRES_PRISMA_URL;
   if (!connectionString) {
     throw new Error(
-      'Falta POEMA32_POSTGRES_URL_NON_POOLING o POEMA32_POSTGRES_PRISMA_URL en el entorno.',
+      'Falta POEMA32_POSTGRES_URL_NON_POOLING, POSTGRES_URL_NON_POOLING o POSTGRES_PRISMA_URL en el entorno.',
     );
   }
 
@@ -21,11 +24,14 @@ export function crearPool() {
   } catch {
     throw new Error('La URL de conexión a Postgres no es válida.');
   }
-  if (process.env.POEMA32_POSTGRES_URL_NON_POOLING && url.port !== '5432') {
-    throw new Error('POEMA32_POSTGRES_URL_NON_POOLING debe usar el puerto 5432.');
+  const usarConexionDirecta =
+    Boolean(process.env.POEMA32_POSTGRES_URL_NON_POOLING) ||
+    Boolean(process.env.POSTGRES_URL_NON_POOLING);
+  if (usarConexionDirecta && url.port !== '5432') {
+    throw new Error('La variable de conexión directa debe usar el puerto 5432.');
   }
-  if (!process.env.POEMA32_POSTGRES_URL_NON_POOLING && url.port !== '6543') {
-    throw new Error('POEMA32_POSTGRES_PRISMA_URL debe usar el pooler de Supabase (puerto 6543).');
+  if (!usarConexionDirecta && url.port !== '6543') {
+    throw new Error('La variable de conexión de pooler debe usar el puerto 6543.');
   }
 
   // Keep the explicit TLS policy below; pg-connection-string otherwise overrides it from sslmode.

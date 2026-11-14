@@ -6,8 +6,8 @@ P00 auditó el repositorio y ejecutó la compilación inicial. El proyecto ya ti
 |---|---|---|---|
 | Next.js + TypeScript | EXISTE Y SIRVE | USAR | Next 16.3.5 y TypeScript 5.9.3; conservar `src/app/`. |
 | Tailwind CSS | EXISTE Y SIRVE | USAR | Tailwind 4.3.3; agregar los tokens de finca sin reemplazar estilos actuales. |
-| Conexión Supabase/Postgres | EXISTE Y SIRVE | ADAPTAR | La app usa `POEMA32_POSTGRES_PRISMA_URL` (pooler 6543); las herramientas locales usan `POEMA32_POSTGRES_URL_NON_POOLING` (5432), ya que la conexión directa funcionó y el pooler agotó el tiempo en este entorno. |
-| Login | EXISTE Y SIRVE | USAR | Conservar login y sesión firmada actuales; envolverlos en P03 y proteger `/finca/*` y `/api/finca/*`. |
+| Conexión Supabase/Postgres | EXISTE Y SIRVE | ADAPTAR | La app admite `POEMA32_POSTGRES_PRISMA_URL` o `POSTGRES_PRISMA_URL` (pooler 6543); las herramientas locales admiten las variables directas terminadas en `URL_NON_POOLING` (5432). |
+| Login | EXISTE Y SIRVE | ADAPTAR | Conservar login y sesión firmada; usuarios y restablecimientos persistidos en Postgres desde M3, sin Upstash. |
 | Migraciones | EXISTE Y SIRVE | USAR | M1 y M2 están aplicadas; `db:migrar` y `db:verificar` pasan en P01. |
 | F1 · Trabajadores | NO EXISTE | CREAR | Reglas/datos en P02/P04, API en P05 e interfaz en P06. |
 | F2 · Implementos | NO EXISTE | CREAR | Reglas/datos en P02/P04, API en P05 e interfaz en P07. |
@@ -19,7 +19,8 @@ P00 auditó el repositorio y ejecutó la compilación inicial. El proyecto ya ti
 ## Resumen
 
 - Usar el proyecto, Tailwind, login, Vitest y alias de imports existentes.
-- Adaptar la conexión con `pg`; la aplicación usa `POEMA32_POSTGRES_PRISMA_URL` (pooler, puerto 6543) y los scripts de administración local usan `POEMA32_POSTGRES_URL_NON_POOLING` (puerto 5432).
+- Adaptar la conexión con `pg`; la aplicación usa `POEMA32_POSTGRES_PRISMA_URL` o `POSTGRES_PRISMA_URL` (pooler, puerto 6543), y los scripts locales usan la variable terminada en `URL_NON_POOLING` (puerto 5432).
+- Mantener usuarios y restablecimientos en Supabase Postgres; no usar Upstash.
 - Las migraciones ya están creadas y aplicadas. Crear las funcionalidades de finca en las fases correspondientes.
 - Next.js 16 usa `src/proxy.ts` para la protección de rutas.
 

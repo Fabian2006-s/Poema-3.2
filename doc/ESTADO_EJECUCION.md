@@ -12,6 +12,7 @@
 | P07 | Completado | Inventario de implementos y químicos implementado; creado implemento y químico de 2,5 litros, duplicados rechazados, alertas/filtros revisados en móvil; build, 49 pruebas y `db:verificar` correctos. |
 | P08 | Completado | Formulario de movimientos, `doc/ACEPTACION.md`, README y checkpoints de fases 5–6; build, 50 pruebas y flujo de 15 casos correctos. |
 | P09 | Completado localmente | Asignaciones y devoluciones transaccionales, historial filtrable, detalle de implementos por trabajador, filtros y reporte CSV; pruebas y compilación correctas. Validación de despliegue pendiente. |
+| P10 | Completado localmente | Login y recuperación persistidos en Postgres, sin Upstash; M3 aplicada; compatibilidad con `POSTGRES_*`; verificación de BD, 55 pruebas y build correctos. |
 
 ## Bitácora
 
@@ -108,3 +109,12 @@
 - Se eliminaron los registros temporales. `npm run db:verificar`: 0 fallas; quedan 2 trabajadores, 2 implementos, 3 químicos, 2 movimientos y 0 asignaciones.
 - `npm test`: 11 archivos, 50 pruebas correctas; `npx tsc --noEmit` y ESLint enfocado correctos. `npm run build`: correcto; siguen dos advertencias preexistentes de trazado dinámico.
 - A-15 a A-18 documentados en `doc/ACEPTACION.md`. La verificación local no certifica el despliegue; repetir los casos en Vercel.
+
+### P10 · 2026-11-14 · Completado localmente
+
+- Se eliminó `@upstash/redis`; usuarios, solicitudes y tokens de restablecimiento usan Postgres en producción. El desarrollo local conserva los archivos existentes.
+- Agregada M3 para `usuarios_login`, `tokens_recuperacion` y `solicitudes_recuperacion`, con RLS, índices y restricciones. `npm run db:migrar`: M1/M2 omitidas y M3 aplicada.
+- La conexión de aplicación y los scripts aceptan las variables `POSTGRES_PRISMA_URL` y `POSTGRES_URL_NON_POOLING` que entrega la integración de Supabase, además de los nombres `POEMA32_*`.
+- `npm run db:verificar`: 0 fallas; tablas nuevas, índices y RLS comprobados, transacción de integridad revertida.
+- `npm test`: 12 archivos y 55 pruebas correctas. `npm run type-check` y `npm run build`: correctos; el build mantiene las dos advertencias preexistentes de trazado de archivos locales.
+- Para el primer usuario de producción, configurar `DEMO_USER_EMAIL` y `DEMO_USER_PASSWORD` cuando `usuarios_login` esté vacía, y `AUTH_SECRET` para firmar sesiones.

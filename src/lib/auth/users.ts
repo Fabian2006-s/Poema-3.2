@@ -2,28 +2,20 @@ import { randomBytes, randomUUID, scrypt as scryptCallback, timingSafeEqual } fr
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { promisify } from 'node:util';
-import { Redis } from '@upstash/redis';
+import {
+  actualizarHashUsuarioLoginPorCorreo,
+  actualizarHashUsuarioLoginPorId,
+  buscarUsuarioLoginPorCorreo,
+  crearUsuarioInicialSiVacio,
+  guardarUsuarioLogin,
+  hayUsuariosLogin,
+} from '@/lib/datos/usuariosLogin';
 import { ErrorDeNegocio } from '@/lib/reglas/errores';
 
 const scrypt = promisify(scryptCallback);
-const usersKey = 'poema:users:v1';
-let redisClient: Redis | undefined;
 
 function isProduction(): boolean {
   return process.env.NODE_ENV === 'production' || process.env.VERCEL === '1';
-}
-
-function getRedisClient(): Redis | null {
-  const url = process.env.UPSTASH_REDIS_REST_URL;
-  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
-  if (url && token) {
-    redisClient ??= new Redis({ url, token });
-    return redisClient;
-  }
-  if (isProduction()) {
-    throw new Error('Configura UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN en Vercel.');
-  }
-  return null;
 }
 
 function getUsersFile(): string {
@@ -58,15 +50,9 @@ export async function verifyPassword(password: string, passwordHash: string): Pr
   return expectedKey.length === derivedKey.length && timingSafeEqual(expectedKey, derivedKey);
 }
 
-async function saveUsers(collection: UserCollection): Promise<void> {
+async function saveUsersLocal(collection: UserCollection): Promise<void> {
   const now = new Date().toISOString();
   collection._meta.lastModified = now;
-  const redis = getRedisClient();
-  if (redis) {
-    await redis.set(usersKey, collection);
-    return;
-  }
-
   const usersFile = getUsersFile();
   await mkdir(path.dirname(usersFile), { recursive: true });
   const temporaryFile = `${usersFile}.${randomUUID()}.tmp`;
@@ -74,34 +60,24 @@ async function saveUsers(collection: UserCollection): Promise<void> {
   await rename(temporaryFile, usersFile);
 }
 
-async function loadUsers(): Promise<UserCollection> {
-  const redis = getRedisClient();
-  if (redis) {
-    const storedCollection = await redis.get<UserCollection>(usersKey);
-    if (storedCollection) return storedCollection;
-    return initializeUsers(async (collection) => {
-      await redis.set(usersKey, collection, { nx: true });
-      return (await redis.get<UserCollection>(usersKey)) ?? collection;
-    });
-  }
-
+async function loadUsersLocal(): Promise<UserCollection> {
   const usersFile = getUsersFile();
   try {
     return JSON.parse(await readFile(usersFile, 'utf8')) as UserCollection;
   } catch (error) {
     if ((error as NodeJS.ErrnoException).code !== 'ENOENT') throw error;
-    return initializeUsers(async (collection) => {
-      await saveUsers(collection);
+    return initializeUsersLocal(async (collection) => {
+      await saveUsersLocal(collection);
       return collection;
     });
   }
 }
 
-async function initializeUsers(
+async function initializeUsersLocal(
   persist: (collection: UserCollection) => Promise<UserCollection>,
 ): Promise<UserCollection> {
-  const email = process.env.DEMO_USER_EMAIL ?? (isProduction() ? undefined : 'demo@poema.com');
-  const password = process.env.DEMO_USER_PASSWORD ?? (isProduction() ? undefined : 'demo1234');
+  const email = process.env.DEMO_USER_EMAIL ?? 'demo@poema.com';
+  const password = process.env.DEMO_USER_PASSWORD ?? 'demo1234';
   if (!email || !password) {
     throw new Error('Configura DEMO_USER_EMAIL y DEMO_USER_PASSWORD para crear la cuenta inicial.');
   }
@@ -127,8 +103,31 @@ async function initializeUsers(
 }
 
 export async function findUserByEmail(email: string): Promise<UserRecord | undefined> {
-  const collection = await loadUsers();
-  return collection.records.find((user) => user.email === email.toLowerCase());
+  const correo = email.trim().toLowerCase();
+  if (!isProduction()) {
+    const collection = await loadUsersLocal();
+    return collection.records.find((user) => user.email === correo);
+  }
+
+  const usuario = await buscarUsuarioLoginPorCorreo(correo);
+  if (usuario) return usuario;
+  if (await hayUsuariosLogin()) return undefined;
+
+  const emailInicial = process.env.DEMO_USER_EMAIL?.trim().toLowerCase();
+  const contrasenaInicial = process.env.DEMO_USER_PASSWORD;
+  const ahora = new Date().toISOString();
+  const usuarioInicial =
+    emailInicial && contrasenaInicial
+      ? {
+          id: `usr_${randomUUID()}`,
+          email: emailInicial,
+          passwordHash: await hashPassword(contrasenaInicial),
+          createdAt: ahora,
+          updatedAt: ahora,
+        }
+      : null;
+  await crearUsuarioInicialSiVacio(usuarioInicial);
+  return buscarUsuarioLoginPorCorreo(correo);
 }
 
 export async function createUser(
@@ -140,11 +139,6 @@ export async function createUser(
     throw new ErrorDeNegocio('DATOS_INVALIDOS');
   }
 
-  const collection = await loadUsers();
-  if (collection.records.some((user) => user.email === correo)) {
-    throw new ErrorDeNegocio('CORREO_DUPLICADO');
-  }
-
   const now = new Date().toISOString();
   const user: UserRecord = {
     id: `usr_${randomUUID()}`,
@@ -153,8 +147,16 @@ export async function createUser(
     createdAt: now,
     updatedAt: now,
   };
-  collection.records.push(user);
-  await saveUsers(collection);
+  if (isProduction()) {
+    await guardarUsuarioLogin(user);
+  } else {
+    const collection = await loadUsersLocal();
+    if (collection.records.some((record) => record.email === correo)) {
+      throw new ErrorDeNegocio('CORREO_DUPLICADO');
+    }
+    collection.records.push(user);
+    await saveUsersLocal(collection);
+  }
 
   return {
     id: user.id,
@@ -165,23 +167,31 @@ export async function createUser(
 }
 
 export async function updateUserPassword(email: string, password: string): Promise<boolean> {
-  const collection = await loadUsers();
+  const passwordHash = await hashPassword(password);
+  if (isProduction()) {
+    return actualizarHashUsuarioLoginPorCorreo(email, passwordHash);
+  }
+
+  const collection = await loadUsersLocal();
   const user = collection.records.find((record) => record.email === email.toLowerCase());
   if (!user) return false;
-
-  user.passwordHash = await hashPassword(password);
+  user.passwordHash = passwordHash;
   user.updatedAt = new Date().toISOString();
-  await saveUsers(collection);
+  await saveUsersLocal(collection);
   return true;
 }
 
 export async function updateUserPasswordById(userId: string, password: string): Promise<boolean> {
-  const collection = await loadUsers();
+  const passwordHash = await hashPassword(password);
+  if (isProduction()) {
+    return actualizarHashUsuarioLoginPorId(userId, passwordHash);
+  }
+
+  const collection = await loadUsersLocal();
   const user = collection.records.find((record) => record.id === userId);
   if (!user) return false;
-
-  user.passwordHash = await hashPassword(password);
+  user.passwordHash = passwordHash;
   user.updatedAt = new Date().toISOString();
-  await saveUsers(collection);
+  await saveUsersLocal(collection);
   return true;
 }
