@@ -41,6 +41,31 @@ async function hashPassword(password: string): Promise<string> {
   return `${salt}:${derivedKey.toString('hex')}`;
 }
 
+async function buildUserRecord(email: string, password: string): Promise<UserRecord> {
+  const correo = email.trim().toLowerCase();
+  if (!correo || password.length < 8 || password.length > 128) {
+    throw new ErrorDeNegocio('DATOS_INVALIDOS');
+  }
+
+  const now = new Date().toISOString();
+  return {
+    id: `usr_${randomUUID()}`,
+    email: correo,
+    passwordHash: await hashPassword(password),
+    createdAt: now,
+    updatedAt: now,
+  };
+}
+
+function publicUser(user: UserRecord): Omit<UserRecord, 'passwordHash'> {
+  return {
+    id: user.id,
+    email: user.email,
+    createdAt: user.createdAt,
+    updatedAt: user.updatedAt,
+  };
+}
+
 export async function verifyPassword(password: string, passwordHash: string): Promise<boolean> {
   const [salt, storedKey] = passwordHash.split(':');
   if (!salt || !storedKey) return false;
@@ -134,36 +159,30 @@ export async function createUser(
   email: string,
   password: string,
 ): Promise<Omit<UserRecord, 'passwordHash'>> {
-  const correo = email.trim().toLowerCase();
-  if (!correo || password.length < 8 || password.length > 128) {
-    throw new ErrorDeNegocio('DATOS_INVALIDOS');
-  }
-
-  const now = new Date().toISOString();
-  const user: UserRecord = {
-    id: `usr_${randomUUID()}`,
-    email: correo,
-    passwordHash: await hashPassword(password),
-    createdAt: now,
-    updatedAt: now,
-  };
+  const user = await buildUserRecord(email, password);
   if (isProduction()) {
     await guardarUsuarioLogin(user);
   } else {
     const collection = await loadUsersLocal();
-    if (collection.records.some((record) => record.email === correo)) {
+    if (collection.records.some((record) => record.email === user.email)) {
       throw new ErrorDeNegocio('CORREO_DUPLICADO');
     }
     collection.records.push(user);
     await saveUsersLocal(collection);
   }
 
-  return {
-    id: user.id,
-    email: user.email,
-    createdAt: user.createdAt,
-    updatedAt: user.updatedAt,
-  };
+  return publicUser(user);
+}
+
+export async function createRegisteredUser(
+  email: string,
+  password: string,
+): Promise<Omit<UserRecord, 'passwordHash'> | null> {
+  if (!isProduction()) return createUser(email, password);
+
+  const user = await buildUserRecord(email, password);
+  if (!(await crearUsuarioInicialSiVacio(user))) return null;
+  return publicUser(user);
 }
 
 export async function updateUserPassword(email: string, password: string): Promise<boolean> {

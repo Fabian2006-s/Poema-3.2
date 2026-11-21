@@ -118,6 +118,7 @@
 - `npm run db:verificar`: 0 fallas; tablas nuevas, índices y RLS comprobados, transacción de integridad revertida.
 - `npm test`: 12 archivos y 55 pruebas correctas. `npm run type-check` y `npm run build`: correctos; el build mantiene las dos advertencias preexistentes de trazado de archivos locales.
 - Para el primer usuario de producción, configurar `DEMO_USER_EMAIL` y `DEMO_USER_PASSWORD` cuando `usuarios_login` esté vacía, y `AUTH_SECRET` para firmar sesiones.
+- El login ofrece crear la primera cuenta mientras `usuarios_login` esté vacía; la creación inicial usa bloqueo transaccional y, después, solo se crean cuentas desde el panel autenticado.
 
 ### Cuenta demo local · 2026-11-21 · Completado
 

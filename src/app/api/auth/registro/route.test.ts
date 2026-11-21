@@ -1,14 +1,22 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { createUser } from '@/lib/auth/users';
+import { createRegisteredUser } from '@/lib/auth/users';
 import { POST } from './route';
 
+const mocks = vi.hoisted(() => ({
+  registroDisponible: vi.fn(async () => true),
+}));
+
 vi.mock('@/lib/auth/users', () => ({
-  createUser: vi.fn(async (email: string) => ({
+  createRegisteredUser: vi.fn(async (email: string) => ({
     id: 'usr_test',
     email: email.trim().toLowerCase(),
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
   })),
+}));
+
+vi.mock('@/lib/auth/registro', () => ({
+  mostrarRegistroPublico: mocks.registroDisponible,
 }));
 
 vi.mock('@/lib/auth/session', () => ({
@@ -26,6 +34,7 @@ function solicitudRegistro(): Request {
 describe('POST /api/auth/registro', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mocks.registroDisponible.mockResolvedValue(true);
   });
 
   afterEach(() => {
@@ -40,16 +49,33 @@ describe('POST /api/auth/registro', () => {
 
     expect(response.status).toBe(201);
     expect(response.headers.get('set-cookie')).toContain('poema_session=session-token');
-    expect(createUser).toHaveBeenCalledWith('nueva@example.com', 'clave-segura-123');
+    expect(createRegisteredUser).toHaveBeenCalledWith('nueva@example.com', 'clave-segura-123');
   });
 
-  it('rechaza el registro público en producción', async () => {
+  it('permite crear la cuenta inicial en producción', async () => {
     vi.stubEnv('NODE_ENV', 'production');
     vi.stubEnv('VERCEL', '1');
 
     const response = await POST(solicitudRegistro());
 
+    expect(response.status).toBe(201);
+    expect(createRegisteredUser).toHaveBeenCalledWith('nueva@example.com', 'clave-segura-123');
+  });
+
+  it('rechaza el registro cuando ya existe una cuenta', async () => {
+    mocks.registroDisponible.mockResolvedValue(false);
+
+    const response = await POST(solicitudRegistro());
+
     expect(response.status).toBe(403);
-    expect(createUser).not.toHaveBeenCalled();
+    expect(createRegisteredUser).not.toHaveBeenCalled();
+  });
+
+  it('rechaza un registro concurrente si otra cuenta se creó primero', async () => {
+    vi.mocked(createRegisteredUser).mockResolvedValueOnce(null);
+
+    const response = await POST(solicitudRegistro());
+
+    expect(response.status).toBe(403);
   });
 });
