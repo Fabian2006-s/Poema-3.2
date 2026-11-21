@@ -57,13 +57,13 @@ export async function hayUsuariosLogin(): Promise<boolean> {
 
 export async function crearUsuarioInicialSiVacio(
   usuario: UsuarioLogin | null,
-): Promise<void> {
-  await conTransaccion(async (tx) => {
+): Promise<boolean> {
+  return conTransaccion(async (tx) => {
     await tx.query('SELECT pg_advisory_xact_lock(hashtext($1)::bigint)', ['poema:usuario-inicial']);
     const resultado = await tx.query<{ existe: boolean } & QueryResultRow>(
       'SELECT EXISTS (SELECT 1 FROM usuarios_login) AS existe',
     );
-    if (resultado.rows[0]?.existe) return;
+    if (resultado.rows[0]?.existe) return false;
     if (!usuario) {
       throw new Error(
         'Configura DEMO_USER_EMAIL y DEMO_USER_PASSWORD para crear la cuenta inicial.',
@@ -75,6 +75,7 @@ export async function crearUsuarioInicialSiVacio(
        VALUES ($1, $2, $3, $4, $5)`,
       [usuario.id, usuario.email, usuario.passwordHash, usuario.createdAt, usuario.updatedAt],
     );
+    return true;
   });
 }
 

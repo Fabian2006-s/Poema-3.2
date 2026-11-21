@@ -1,11 +1,11 @@
 import Link from 'next/link';
 import { FormularioUsuario } from '@/components/finca/FormularioUsuario';
-import { registroPublicoHabilitado } from '@/lib/auth/registro';
+import { mostrarRegistroPublico } from '@/lib/auth/registro';
 
 export const dynamic = 'force-dynamic';
 
-export default function RegistroPage() {
-  if (!registroPublicoHabilitado()) {
+export default async function RegistroPage() {
+  if (!(await mostrarRegistroPublico())) {
     return (
       <main className="flex min-h-screen items-center justify-center px-4 py-10">
         <section className="w-full max-w-lg rounded-2xl border border-borde bg-superficie p-6 shadow-xl sm:p-8">
