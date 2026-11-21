@@ -15,6 +15,7 @@ const enlaces = [
   { href: '/finca/movimientos', etiqueta: 'Historial' },
   { href: '/finca/asignaciones', etiqueta: 'Asignaciones' },
   { href: '/finca/inventario', etiqueta: 'Reporte' },
+  { href: '/finca/gestion', etiqueta: 'Operación' },
 ];
 
 export function NavegacionFinca({ correo }: { correo: string }) {

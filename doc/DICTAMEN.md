@@ -1,5 +1,7 @@
 # Dictamen de conciliación
 
+> Actualización P11: el contenido siguiente registra el dictamen histórico de P00. Los módulos base de finca indicados como inexistentes ya se implementaron; P11 agrega los módulos operativos que se listan abajo. La migración 004 fue aplicada y verificada en Postgres.
+
 P00 auditó el repositorio y ejecutó la compilación inicial. El proyecto ya tiene una base Next.js, estilos Tailwind, autenticación y pruebas; no tiene aún el módulo de la finca ni conexión a la base desde código.
 
 | Pieza o funcionalidad | Estado | Qué hacer | Detalle |
@@ -23,6 +25,18 @@ P00 auditó el repositorio y ejecutó la compilación inicial. El proyecto ya ti
 - Mantener usuarios y restablecimientos en Supabase Postgres; no usar Upstash.
 - Las migraciones ya están creadas y aplicadas. Crear las funcionalidades de finca en las fases correspondientes.
 - Next.js 16 usa `src/proxy.ts` para la protección de rutas.
+
+## Ampliación P11
+
+| Funcionalidad | Decisión | Implementación |
+|---|---|---|
+| Parcelas y producción por racimos/cajas | CREAR | Módulos operativos bajo `/finca/gestion/` |
+| Riego y consumo estimado de agua | CREAR | Registro por parcela, minutos y m³ |
+| Asistencia de trabajadores | CREAR | Novedad y minutos por jornada; sin nómina |
+| Maquinaria y mantenimiento | CREAR | Equipos, lecturas, servicio y costos |
+| Empaque y ventas | CREAR | Cajas/rechazos, parcela, cliente y valor COP |
+| Gastos | CREAR | Categoría, descripción y valor COP |
+| Materiales de empaque | CREAR | Catálogo, alertas de mínimo y movimientos transaccionales |
 
 ## Qué necesita conseguir el estudiante
 

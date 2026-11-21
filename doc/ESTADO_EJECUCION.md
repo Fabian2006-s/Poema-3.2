@@ -13,6 +13,7 @@
 | P08 | Completado | Formulario de movimientos, `doc/ACEPTACION.md`, README y checkpoints de fases 5–6; build, 50 pruebas y flujo de 15 casos correctos. |
 | P09 | Completado localmente | Asignaciones y devoluciones transaccionales, historial filtrable, detalle de implementos por trabajador, filtros y reporte CSV; pruebas y compilación correctas. Validación de despliegue pendiente. |
 | P10 | Completado localmente | Login y recuperación persistidos en Postgres, sin Upstash; M3 aplicada; compatibilidad con `POSTGRES_*`; verificación de BD, 55 pruebas y build correctos. |
+| P11 | Completado localmente | Gestión integral, migración 004 aplicada; `db:verificar` sin fallas; build, type-check y lint correctos; 67 pruebas pasan. Sin commit ni push. |
 
 ## Bitácora
 
@@ -149,3 +150,13 @@
 - Revisión visual local a 375 px y escritorio; navegación móvil comprobada y sin desbordamiento horizontal.
 - `npm run build`, `npm test` (60 pruebas), `npm run type-check` y `npm run lint`: correctos.
 - Despliegue de producción asociado al commit `9b5e14b`: READY; login visual verificado en Vercel.
+
+### P11 · Gestión integral de finca
+
+- Se añadieron parcelas, producción, riego, asistencia, maquinaria y mantenimientos, empaque, ventas por parcela, gastos y materiales de empaque.
+- La nueva sección `/finca/gestion` agrupa los módulos y la navegación del panel ofrece acceso directo.
+- Se agregó la migración `004_gestion_integral_finca.sql` con restricciones, llaves foráneas, RLS e índices; aplicada con `npm run db:migrar`.
+- `npm run db:verificar`: 0 fallas; todas las tablas nuevas existen y tienen RLS activo.
+- Pruebas de asistencia, volúmenes, lecturas y saldos de materiales incluidas. `npm test`: 15 archivos y 67 pruebas correctas.
+- `npm run build`, `npm run type-check` y `npm run lint`: correctos. El build mantiene las dos advertencias preexistentes de trazado dinámico de archivos.
+- No se creó commit ni se hizo push.

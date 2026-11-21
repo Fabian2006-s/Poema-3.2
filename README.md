@@ -10,6 +10,12 @@ Aplicación web para administrar trabajadores e inventario de una finca bananera
 - Inventario de implementos y productos químicos.
 - Movimientos de entrada y salida para actualizar existencias.
 - Validación de cantidades, fechas, stock insuficiente y productos vencidos.
+- Parcelas y registros de producción por racimos y cajas.
+- Asistencia diaria de trabajadores, sin cálculo de nómina.
+- Control de riego por parcela, duración y volumen estimado de agua.
+- Registro de maquinaria, uso, lecturas y mantenimientos.
+- Empaque, ventas por parcela y gastos en pesos colombianos.
+- Inventario de materiales de empaque con movimientos de stock.
 
 ## Requisitos
 

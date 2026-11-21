@@ -61,7 +61,7 @@ export default async function PanelFincaPage() {
               El campo, bajo control.
             </h1>
             <p className="mt-4 max-w-xl text-sm leading-6 text-white/75 sm:text-base">
-              Revisa el personal, cuida las existencias y mantén cada movimiento al día.
+              Revisa el personal, controla las existencias y organiza toda la operación del cultivo.
             </p>
             <div className="mt-7 flex flex-wrap gap-3">
               <Link
@@ -83,6 +83,12 @@ export default async function PanelFincaPage() {
                 href="/finca/inventario"
               >
                 Ver inventario
+              </Link>
+              <Link
+                className="inline-flex min-h-12 items-center rounded-xl border border-white/20 bg-white/[0.07] px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/15 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                href="/finca/gestion"
+              >
+                Gestión integral
               </Link>
             </div>
           </div>

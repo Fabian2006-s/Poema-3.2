@@ -210,6 +210,17 @@ export {
   crearTrabajador,
   listarTrabajadores,
 } from '@/lib/datos/trabajadores';
+export {
+  cargarModuloGestion,
+  cambiarEstadoRecurso,
+  registrarOperacion,
+} from '@/lib/datos/operaciones';
+export type {
+  DatosModuloGestion,
+  FilaGestion,
+  ModuloGestion,
+  OpcionGestion,
+} from '@/lib/datos/operaciones';
 export { cerrarPool } from '@/lib/datos/conexion';
 export type {
   Asignacion,

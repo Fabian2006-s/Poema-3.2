@@ -9,6 +9,17 @@ const tablas = [
   'usuarios_login',
   'tokens_recuperacion',
   'solicitudes_recuperacion',
+  'parcelas',
+  'asistencias',
+  'producciones',
+  'riegos',
+  'maquinaria',
+  'registros_maquinaria',
+  'empaques',
+  'ventas',
+  'gastos',
+  'materiales_empaque',
+  'movimientos_materiales',
 ];
 const vistas = ['v_implementos', 'v_quimicos'];
 const estructuras = [
@@ -22,6 +33,16 @@ const estructuras = [
   ['mov_cantidad_positiva', 'restricción'],
   ['mov_motivo_minimo', 'restricción'],
   ['usr_login_email_minimo', 'restricción'],
+  ['ux_parcelas_nombre', 'índice'],
+  ['asistencia_trabajador_fecha_unica', 'restricción'],
+  ['produccion_racimos_positivos', 'restricción'],
+  ['riego_volumen_no_negativo', 'restricción'],
+  ['ux_maquinaria_nombre', 'índice'],
+  ['empaque_cajas_positivas', 'restricción'],
+  ['venta_valor_positivo', 'restricción'],
+  ['gasto_valor_positivo', 'restricción'],
+  ['ux_materiales_empaque_nombre', 'índice'],
+  ['movimiento_material_cantidad_positiva', 'restricción'],
 ];
 let fallas = 0;
 const pool = crearPool();

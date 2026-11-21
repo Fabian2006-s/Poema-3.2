@@ -1,6 +1,6 @@
 # Finca Bananera · Plan técnico de implementación
 
-> Sistema de Gestión de Finca Bananera (trabajadores, implementos, químicos e inventario) · versión técnica 1.0, derivada del plan funcional de Fabián Steban Andrade Sosa
+> Sistema de Gestión de Finca Bananera · versión técnica 1.1, ampliada en P11 desde el plan funcional de Fabián Steban Andrade Sosa
 > Asignatura: Lógica y Programación (SIST0200) · Universidad Sergio Arboleda, Santa Marta · Docente: Jhonatan Castro Polo
 > Stack: Next.js (App Router) + TypeScript + Tailwind CSS + Supabase Postgres · Despliegue en Vercel
 > Ejecución: GitHub Copilot en modo Agente, con los prompts de `doc/PROMPTS_FINCA.md`
@@ -79,7 +79,7 @@ El plan funcional exige autenticación del encargado (RNF-06) y un solo actor: e
 
 ## 2. Alcance
 
-### 2.1 Módulo mínimo (el del plan funcional)
+### 2.1 Módulo mínimo y ampliación P11
 
 | ID | Funcionalidad (plan funcional) | Casos de uso | Prompts |
 |---|---|---|---|
@@ -89,6 +89,15 @@ El plan funcional exige autenticación del encargado (RNF-06) y un solo actor: e
 | F4 | Registrar entradas y salidas de inventario | CU-04 | P02, P04, P05, P08 |
 | F5 | Consultar existencias | CU-05 | P04, P07, P08 |
 | F6 | Ver alertas de inventario bajo | CU-06 | P02, P08 |
+| F13 | Registrar parcelas de cultivo | — | P11 |
+| F14 | Registrar producción por parcela (racimos y cajas) | — | P11 |
+| F15 | Registrar riegos (duración y volumen estimado) | — | P11 |
+| F16 | Registrar asistencia y minutos trabajados | — | P11 |
+| F17 | Controlar maquinaria, lecturas y mantenimientos | — | P11 |
+| F18 | Registrar empaque por parcela (cajas y rechazos) | — | P11 |
+| F19 | Registrar ventas por parcela, cliente, cajas y valor COP | — | P11 |
+| F20 | Registrar gastos por categoría y valor COP | — | P11 |
+| F21 | Controlar materiales de empaque y sus movimientos | — | P11 |
 
 ### 2.2 Funcionalidades opcionales
 
@@ -105,7 +114,7 @@ Se construyen solo con la fase 5 cerrada. La clasificación "vencido" y "próxim
 
 ### 2.3 Fuera de alcance
 
-Se mantiene la lista del plan funcional: nómina y salarios, control de horas y jornadas, ventas de banano, clientes y compradores, compras y pagos automáticos a proveedores, maquinaria y vehículos, cálculo de dosis de químicos por cultivo, instrucciones de seguridad para químicos, geolocalización de trabajadores, aplicación móvil independiente, y modificación de inventarios por los trabajadores.
+Nómina, cálculo de salarios y pagos automáticos a proveedores; compras y cuentas por pagar; cálculo de dosis de químicos por cultivo; instrucciones de seguridad para químicos; geolocalización; aplicación móvil independiente; y acceso de trabajadores al sistema. La asistencia, ventas, maquinaria y costos operativos sí forman parte de la ampliación P11, pero no generan nómina, facturación ni contabilidad automática.
 
 ### 2.4 Decisiones de alcance de esta versión técnica
 
@@ -119,6 +128,13 @@ Se mantiene la lista del plan funcional: nómina y salarios, control de horas y 
 | Un trabajador, implemento o químico no se elimina; se desactiva | Un elemento con movimientos o asignaciones debe seguir en el historial |
 | El umbral de "próximo a vencer" (30 días) es configurable | RNF-11: se cambia en un solo lugar |
 | Un químico vencido no admite salida | RN-15 |
+| Las parcelas, maquinaria y materiales se desactivan; los registros históricos no se eliminan | Conserva trazabilidad operativa |
+| Producción y empaque se registran por fecha y parcela; la cosecha se mide en racimos/cajas | Permite comparar cosecha y poscosecha sin asumir conversiones |
+| Riego almacena duración en minutos y volumen estimado en centésimas de m³ | Mantiene cantidades exactas y facilita reportes |
+| La asistencia registra una novedad por trabajador y fecha; una corrección reemplaza la marca previa, y solo se guardan minutos si asistió | Evita duplicados diarios; no incluye cálculo de nómina |
+| Lecturas de maquinaria y volúmenes de agua se almacenan en centésimas; dinero en COP enteros | Evita errores de redondeo |
+| Entradas/salidas de materiales actualizan el stock y el movimiento en una transacción | Evita saldos sin trazabilidad |
+| Ventas y empaques se registran de forma independiente, sin descontar automáticamente existencias | Evita asumir una relación comercial o de inventario no definida |
 
 ---
 
@@ -509,6 +525,22 @@ La vista usa `CURRENT_DATE` como apoyo de presentación; la clasificación ofici
 | `23514` | cantidades (`*_no_neg`, `mov_cantidad_positiva`) | `DATOS_INVALIDOS` |
 | `23514` | cualquier otro CHECK | `DATOS_INVALIDOS` |
 | Otro | | `ERROR_INTERNO` (se registra en consola, no se muestra al usuario) |
+
+### 9.5 M4 · Gestión integral
+
+La migración `004_gestion_integral_finca.sql` agrega:
+
+| Tablas | Uso |
+|---|---|
+| `parcelas` | Catálogo de parcelas, área opcional y estado activo |
+| `producciones`, `riegos`, `empaques` | Registros por parcela y fecha |
+| `asistencias` | Novedad y minutos por trabajador y fecha; una marca diaria por persona |
+| `maquinaria`, `registros_maquinaria` | Equipos, uso, medidor, mantenimiento y costo |
+| `ventas` | Cliente, parcela, cajas, remisión y valor en COP |
+| `gastos` | Categoría, descripción, forma de pago y valor en COP |
+| `materiales_empaque`, `movimientos_materiales` | Catálogo de insumos y movimientos que modifican existencias |
+
+Todas las tablas nuevas tienen RLS habilitado y acceso revocado a `anon`/`authenticated`; las relaciones usan `ON DELETE RESTRICT`. Las parcelas, maquinaria y materiales se conservan y se reactivan/desactivan; los registros históricos no se eliminan y la asistencia permite corregir la marca del mismo día. Las lecturas de medidor y el volumen de riego se guardan en centésimas; dinero, en pesos enteros. El ajuste del saldo y su movimiento se hacen en una sola transacción.
 
 ---
 

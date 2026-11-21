@@ -107,6 +107,13 @@ function traducirErrorPostgres(error: { code: string; constraint?: string }): Co
         return 'IMPLEMENTO_DUPLICADO';
       case 'ux_quim_nombre':
         return 'QUIMICO_DUPLICADO';
+      case 'ux_parcelas_nombre':
+        return 'PARCELA_DUPLICADA';
+      case 'ux_maquinaria_nombre':
+      case 'ux_maquinaria_identificador':
+        return 'MAQUINARIA_DUPLICADA';
+      case 'ux_materiales_empaque_nombre':
+        return 'MATERIAL_DUPLICADO';
       default:
         return 'DATOS_INVALIDOS';
     }

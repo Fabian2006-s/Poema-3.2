@@ -1,6 +1,8 @@
 # Estado actual del repositorio
 
-Auditoría inicial P00. No se modificaron archivos de código.
+Auditoría inicial P00, actualizada con el estado de P11. La información histórica de P00 se conserva en las secciones que describen el punto de partida; el estado vigente se resume aquí y en la sección 9.
+
+> P11 añade módulos de parcelas, producción, riego, asistencia, maquinaria, empaque, ventas, gastos y materiales de empaque. La migración `004_gestion_integral_finca.sql` está aplicada en Postgres y verificada; los módulos aún no tienen registros operativos.
 
 ## 1. Proyecto y versiones
 
@@ -14,7 +16,7 @@ Existe un proyecto Next.js con TypeScript:
 
 ## 2. Scripts disponibles
 
-`dev`, `build`, `start`, `lint`, `format`, `type-check`, `test`, `test:watch` y `test:coverage`. Todavía no existen scripts para migraciones, verificación de BD o datos demo.
+Los scripts incluyen `dev`, `build`, `start`, `lint`, `format`, `type-check`, `test`, migraciones y verificación de BD.
 
 ## 3. Estructura (hasta tres niveles)
 
@@ -40,7 +42,7 @@ data/
 doc/
 ```
 
-La aplicación usa `src/`. No existen `src/app/finca/`, `src/app/api/finca/`, `src/components/ui/`, `src/lib/datos/`, `src/lib/reglas/` ni `supabase/`.
+La aplicación usa `src/`, con módulos bajo `src/app/finca/`, API protegida en `src/app/api/finca/`, componentes en `src/components/finca/` y `src/components/ui/`, acceso a datos en `src/lib/datos/`, reglas en `src/lib/reglas/` y migraciones en `supabase/migrations/`.
 
 ## 4. Dependencias relevantes
 
@@ -71,34 +73,33 @@ Las cuentas del login y los restablecimientos usan Postgres en producción, y ar
 
 ## 8. Migraciones
 
-P01 creó `supabase/migrations/001_finca_base.sql`, `002_finca_vistas_seguridad.sql`, `scripts/migrar.mjs` y `scripts/verificar-bd.mjs`. M3 (`003_autenticacion_postgres.sql`) agrega usuarios y recuperación de contraseña; las tres migraciones están aplicadas.
+P01 creó `supabase/migrations/001_finca_base.sql`, `002_finca_vistas_seguridad.sql`, `scripts/migrar.mjs` y `scripts/verificar-bd.mjs`. M3 (`003_autenticacion_postgres.sql`) agrega usuarios y recuperación de contraseña; P11 agrega `004_gestion_integral_finca.sql`. Las cuatro migraciones están aplicadas.
 
 ## 9. Dominio de la finca
 
 | Funcionalidad | Estado actual |
 |---|---|
-| Trabajadores | No existe |
-| Implementos | No existe |
-| Productos químicos | No existe |
-| Movimientos de inventario | No existe |
-| Asignaciones | No existe |
+| Trabajadores y asignaciones | Implementado |
+| Inventario de implementos y químicos | Implementado |
+| Movimientos y alertas de inventario | Implementado |
+| Parcelas, producción y riego | Implementados; migración 004 aplicada |
+| Asistencia de trabajadores | Implementada; migración 004 aplicada |
+| Maquinaria y mantenimientos | Implementados; migración 004 aplicada |
+| Empaque, ventas y gastos | Implementados; migración 004 aplicada |
+| Materiales y movimientos de empaque | Implementados; migración 004 aplicada |
 
 ## 10. Estilos
 
-Tailwind CSS 4 está configurado mediante `@tailwindcss/postcss`; `src/app/globals.css` importa `tailwindcss` y define variables de fondo oscuro, gradientes y acentos. Hay fuente Inter en el layout. No existen tokens ni estilos de la finca.
+Tailwind CSS 4 está configurado mediante `@tailwindcss/postcss`; `src/app/globals.css` importa `tailwindcss` y define los tokens visuales de la finca. Hay fuente Inter en el layout y componentes compartidos en `src/components/ui/`.
 
 ## 11. Pruebas
 
-Vitest 5 está configurado en `vitest.config.ts`. Hay pruebas para autenticación, recuperación de contraseña, `dataService` y salud de API. No hay pruebas de reglas o del dominio de finca.
+Vitest 5 está configurado en `vitest.config.ts`. Hay pruebas para autenticación, recuperación de contraseña, reglas de finca, validación operativa, `dataService` y salud de API.
 
 ## 12. Posibles conflictos
 
-- `src/app/finca/`: no existe.
-- `src/app/api/finca/`: no existe.
-- `src/lib/dataService.ts`: existe para recuperación de contraseña; no implementa datos de finca y debe conservarse/adaptarse sin duplicar nombre de módulo.
-- `src/components/ui/`: no existe.
-- `src/app/page.tsx`: muestra el componente de login; no redirige a `/finca`.
-- Tablas `trabajadores`, `implementos`, `quimicos`, `movimientos` y `asignaciones`: no existen ni hay migraciones.
+- Las afirmaciones de inexistencia en la auditoría P00 son históricas; los módulos base de finca ya están implementados.
+- La migración `004_gestion_integral_finca.sql` está aplicada; la verificación de tablas, RLS e integridad terminó sin fallas.
 
 ## 13. Decisiones derivadas
 
