@@ -133,3 +133,11 @@
 - Se ajustó el formulario para reemplazar la navegación por `/finca` y refrescar la sesión después del login.
 - `npm run build`: correcto.
 - `npm test`: 13 archivos y 60 pruebas correctos.
+
+### Corrección de login en producción · 2026-11-21 · Completado
+
+- Los logs de Vercel confirmaron que faltaba `AUTH_SECRET`; por eso el endpoint de login respondía 503 y no podía firmar la cookie.
+- Se generó y configuró `AUTH_SECRET` como variable sensible solo para producción, sin guardarla en el repositorio.
+- Se redeplegó `main` (`592c727`) en Vercel; el despliegue quedó READY.
+- Verificación real de producción: `POST /api/auth/login` devolvió 200, creó `poema_session` y `GET /api/finca/sesion` con esa cookie devolvió 200.
+- Se confirmó que `demo@poema.com` y la contraseña demo restablecida coinciden con el hash guardado en Postgres.
