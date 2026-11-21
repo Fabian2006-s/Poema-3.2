@@ -148,4 +148,4 @@
 - Se rediseñaron el login, la navegación adaptable y el panel con resumen visual, accesos directos e indicadores de alertas reales.
 - Revisión visual local a 375 px y escritorio; navegación móvil comprobada y sin desbordamiento horizontal.
 - `npm run build`, `npm test` (60 pruebas), `npm run type-check` y `npm run lint`: correctos.
-- Despliegue de producción pendiente de publicar este cambio.
+- Despliegue de producción asociado al commit `9b5e14b`: READY; login visual verificado en Vercel.
