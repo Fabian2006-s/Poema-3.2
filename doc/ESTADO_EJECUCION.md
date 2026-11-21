@@ -125,3 +125,11 @@
 - Se creó o restableció la cuenta local `demo@poema.com`.
 - Se verificó localmente el acceso de la cuenta mediante el flujo de hashes scrypt.
 - Disponible el comando `npm run cuenta:demo` para restablecer la contraseña demo.
+
+### Corrección de inicio de sesión · 2026-11-21 · Completado
+
+- Se restableció `demo@poema.com` con contraseña `demo1234` también en `usuarios_login` de Postgres.
+- Se comprobó localmente: `POST /api/auth/login` respondió 200, creó la cookie `poema_session` y autenticó el correo demo.
+- Se ajustó el formulario para reemplazar la navegación por `/finca` y refrescar la sesión después del login.
+- `npm run build`: correcto.
+- `npm test`: 13 archivos y 60 pruebas correctos.

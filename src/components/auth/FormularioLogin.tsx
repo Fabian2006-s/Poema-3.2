@@ -44,7 +44,8 @@ export function FormularioLogin({ mostrarRegistro }: { mostrarRegistro: boolean 
       const result = (await response.json()) as { error?: string };
 
       if (response.ok) {
-        router.push('/finca');
+        router.replace('/finca');
+        router.refresh();
         return;
       }
 
