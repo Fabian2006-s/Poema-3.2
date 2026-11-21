@@ -13,6 +13,7 @@
     "db:verificar": "node scripts/verificar-bd.mjs",
     "db:limpiar": "node scripts/limpiar-prueba.mjs",
     "db:demo": "tsx scripts/cargar-demo.ts",
+    "cuenta:demo": "tsx scripts/restablecer-demo.ts",
     "probar:flujo": "tsx scripts/probar-flujo.ts",
     "test": "vitest run",
     "test:watch": "vitest",

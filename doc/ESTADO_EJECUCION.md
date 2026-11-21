@@ -123,3 +123,4 @@
 
 - Se creó o restableció la cuenta local `demo@poema.com`.
 - Se verificó localmente el acceso de la cuenta mediante el flujo de hashes scrypt.
+- Disponible el comando `npm run cuenta:demo` para restablecer la contraseña demo.
