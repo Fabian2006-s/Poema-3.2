@@ -1,27 +1,22 @@
 @import 'tailwindcss';
 
 @theme {
-  --color-primario: #3b7d23;
-  --color-primario-suave: #e8f2e0;
+  --color-primario: #286044;
+  --color-primario-suave: #e8f0e7;
   --color-disponible: #2f7d4f;
   --color-bajo: #b7791f;
   --color-vencido: #b83232;
   --color-inactivo: #5b6770;
-  --color-fondo: #f6f8f3;
+  --color-fondo: #f3f4ec;
   --color-superficie: #ffffff;
-  --color-texto: #1f2933;
-  --color-texto-suave: #52606d;
-  --color-borde: #dce3d5;
+  --color-texto: #203229;
+  --color-texto-suave: #64736a;
+  --color-borde: #dfe5d9;
 }
 
 :root {
-  --gradient-1: #0f0c29;
-  --gradient-2: #302b63;
-  --gradient-3: #24243e;
-  --accent-primary: #3b82f6;
-  --accent-secondary: #8b5cf6;
-  --background: #020817;
-  --foreground: #f8fafc;
+  --background: #f3f4ec;
+  --foreground: #203229;
 }
 
 html {
@@ -31,8 +26,8 @@ html {
 body {
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(59, 130, 246, 0.18), transparent 30%),
-    linear-gradient(135deg, var(--gradient-1), var(--gradient-2), var(--gradient-3));
+    radial-gradient(circle at 8% 0%, rgba(196, 211, 166, 0.2), transparent 28%),
+    var(--background);
   color: var(--foreground);
   font-family: var(--font-inter), Arial, Helvetica, sans-serif;
 }
@@ -42,6 +37,6 @@ body {
 }
 
 ::selection {
-  background: rgba(139, 92, 246, 0.5);
-  color: white;
+  background: #c9dbc6;
+  color: #173d2b;
 }

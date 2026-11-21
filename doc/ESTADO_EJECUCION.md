@@ -141,3 +141,11 @@
 - Se redeplegó `main` (`592c727`) en Vercel; el despliegue quedó READY.
 - Verificación real de producción: `POST /api/auth/login` devolvió 200, creó `poema_session` y `GET /api/finca/sesion` con esa cookie devolvió 200.
 - Se confirmó que `demo@poema.com` y la contraseña demo restablecida coinciden con el hash guardado en Postgres.
+
+### Mejora visual del proyecto · 2026-11-21 · Implementado
+
+- Se actualizó la identidad visual a tonos de bosque y crema en el login y las pantallas de la finca.
+- Se rediseñaron el login, la navegación adaptable y el panel con resumen visual, accesos directos e indicadores de alertas reales.
+- Revisión visual local a 375 px y escritorio; navegación móvil comprobada y sin desbordamiento horizontal.
+- `npm run build`, `npm test` (60 pruebas), `npm run type-check` y `npm run lint`: correctos.
+- Despliegue de producción pendiente de publicar este cambio.

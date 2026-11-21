@@ -12,7 +12,9 @@ export function Tarjeta({
   descripcion?: string;
 }) {
   return (
-    <section className={`rounded-lg border border-borde bg-superficie p-5 shadow-sm ${className}`}>
+    <section
+      className={`rounded-2xl border border-borde/80 bg-superficie p-5 shadow-[0_12px_35px_-28px_rgba(32,50,41,0.55)] ${className}`}
+    >
       {(titulo || descripcion) && (
         <header className="mb-4">
           {titulo && <h2 className="text-lg font-semibold text-texto">{titulo}</h2>}
